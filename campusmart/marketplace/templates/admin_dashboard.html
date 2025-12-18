@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - CampusMart</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        .navbar { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1); }
+        .logo { color: #4a90e2; font-size: 1.8em; font-weight: bold; }
+        .admin-badge { background: linear-gradient(135deg, #dc3545, #c82333); color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.9em; font-weight: bold; }
+        .logout-btn { background: #6c757d; color: white; padding: 8px 16px; border-radius: 15px; text-decoration: none; font-weight: bold; transition: all 0.3s ease; }
+        .logout-btn:hover { background: #5a6268; transform: translateY(-2px); }
+        .container { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
+        .dashboard-header { text-align: center; margin-bottom: 40px; color: white; }
+        .dashboard-header h1 { font-size: 2.5em; font-weight: bold; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); }
+        .dashboard-header p { font-size: 1.2em; opacity: 0.9; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-bottom: 40px; }
+        .stat-card { background: rgba(255, 255, 255, 0.95); border-radius: 15px; padding: 30px; text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease; backdrop-filter: blur(10px); }
+        .stat-card:hover { transform: translateY(-5px); }
+        .stat-icon { font-size: 3em; margin-bottom: 15px; }
+        .stat-number { font-size: 2.5em; font-weight: bold; color: #27ae60; margin-bottom: 5px; }
+        .stat-label { color: #666; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
+        .admin-tabs { display: flex; background: rgba(255, 255, 255, 0.2); border-radius: 25px; padding: 5px; margin-bottom: 30px; backdrop-filter: blur(10px); }
+        .tab-btn { flex: 1; padding: 15px 20px; border: none; background: none; border-radius: 20px; cursor: pointer; transition: all 0.3s ease; font-weight: 600; color: white; }
+        .tab-btn.active { background: rgba(255, 255, 255, 0.95); color: #4a90e2; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeInUp 0.6s ease forwards; }
+        .content-card { background: rgba(255, 255, 255, 0.95); border-radius: 20px; padding: 30px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); backdrop-filter: blur(15px); }
+        .content-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .content-title { color: #333; font-size: 1.8em; font-weight: bold; }
+        .search-filter { display: flex; gap: 15px; align-items: center; }
+        .search-input { padding: 10px 15px; border: 2px solid #e1e5e9; border-radius: 20px; outline: none; transition: border-color 0.3s ease; }
+        .search-input:focus { border-color: #4a90e2; }
+        .filter-select { padding: 10px 15px; border: 2px solid #e1e5e9; border-radius: 20px; outline: none; background: white; }
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .data-table th, .data-table td { padding: 15px; text-align: left; border-bottom: 1px solid #e9ecef; }
+        .data-table th { background: #f8f9fa; font-weight: bold; color: #333; }
+        .data-table tr:hover { background: rgba(74, 144, 226, 0.05); }
+        .status-badge { display: inline-block; padding: 5px 12px; border-radius: 15px; font-size: 0.8em; font-weight: bold; text-transform: uppercase; }
+        .status-verified { background: #d4edda; color: #155724; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-blocked { background: #f8d7da; color: #721c24; }
+        .status-available { background: #d4edda; color: #155724; }
+        .status-sold { background: #f8d7da; color: #721c24; }
+        .status-in-progress { background: #d1ecf1; color: #0c5460; }
+        .action-btn { padding: 8px 15px; border: none; border-radius: 15px; cursor: pointer; font-size: 0.9em; font-weight: bold; margin-right: 8px; transition: all 0.3s ease; }
+        .btn-verify { background: #28a745; color: white; }
+        .btn-block { background: #dc3545; color: white; }
+        .btn-view { background: #17a2b8; color: white; }
+        .btn-approve { background: #28a745; color: white; }
+        .btn-reject { background: #dc3545; color: white; }
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #4a90e2, #357abd); display: inline-flex; align-items: center; justify-content: center; color: white; font-weight: bold; margin-right: 10px; }
+        .product-image { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; margin-right: 10px; }
+        .product-placeholder { width: 50px; height: 50px; border-radius: 8px; background: #f8f9fa; display: inline-flex; align-items: center; justify-content: center; margin-right: 10px; font-size: 1.5em; color: #999; }
+        .empty-state { text-align: center; padding: 60px 20px; color: #666; }
+        .empty-state-icon { font-size: 4em; margin-bottom: 20px; opacity: 0.5; }
+        .empty-state-text { font-size: 1.2em; font-weight: 500; }
+        .bulk-actions { background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+        .bulk-checkbox { margin-right: 10px; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); }
+        .modal-content { background-color: white; margin: 5% auto; padding: 30px; border-radius: 15px; width: 80%; max-width: 600px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-title { font-size: 1.5em; font-weight: bold; color: #333; }
+        .close { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .close:hover { color: #000; }
+        .alert { padding: 15px; margin-bottom: 20px; border-radius: 8px; }
+        .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .alert-warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .btn-primary { background: linear-gradient(135deg, #4a90e2, #357abd); color: white; padding: 10px 20px; border: none; border-radius: 20px; cursor: pointer; font-weight: bold; }
+        .btn-secondary { background: #6c757d; color: white; padding: 10px 20px; border: none; border-radius: 20px; cursor: pointer; font-weight: bold; }
+        .btn-danger { background: #dc3545; color: white; padding: 10px 20px; border: none; border-radius: 20px; cursor: pointer; font-weight: bold; }
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+            .admin-tabs { flex-direction: column; gap: 10px; }
+            .content-header { flex-direction: column; gap: 15px; align-items: flex-start; }
+            .search-filter { width: 100%; flex-direction: column; }
+            .search-input, .filter-select { width: 100%; }
+            .data-table { font-size: 0.9em; }
+            .data-table th, .data-table td { padding: 10px 8px; }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">CampusMart</div>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div class="admin-badge">Admin Dashboard</div>
+            <a href="/logout/" class="logout-btn">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Admin Dashboard</h1>
+            <p>Manage users, products, and platform settings</p>
+        </div>
+
+        <!-- Alert Container -->
+        <div id="alert-container"></div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-number" id="total-users">0</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-number" id="pending-users">0</div>
+                <div class="stat-label">Pending Verification</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📦</div>
+                <div class="stat-number" id="total-products">0</div>
+                <div class="stat-label">Total Products</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🚫</div>
+                <div class="stat-number" id="blocked-products">0</div>
+                <div class="stat-label">Blocked Products</div>
+            </div>
+        </div>
+
+        <!-- Admin Tabs -->
+        <div class="admin-tabs">
+            <button class="tab-btn active" onclick="switchTab('users')">User Management</button>
+            <button class="tab-btn" onclick="switchTab('products')">Product Management</button>
+            <button class="tab-btn" onclick="switchTab('verification')">Pending Verifications</button>
+            <button class="tab-btn" onclick="switchTab('reports')">Reports & Analytics</button>
+            <button class="tab-btn" onclick="switchTab('settings')">System Settings</button>
+        </div>
+
+        <!-- Users Tab -->
+        <div id="users-tab" class="tab-content active">
+            <div class="content-card">
+                <div class="content-header">
+                    <h2 class="content-title">User Management</h2>
+                    <div class="search-filter">
+                        <input type="text" class="search-input" placeholder="Search users..." onkeyup="filterUsers(this.value)">
+                        <select class="filter-select" onchange="filterUsersByStatus(this.value)">
+                            <option value="">All Users</option>
+                            <option value="verified">Verified</option>
+                            <option value="pending">Pending</option>
+                            <option value="blocked">Blocked</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Bulk Actions -->
+                <div class="bulk-actions">
+                    <input type="checkbox" class="bulk-checkbox" id="select-all-users" onchange="toggleAllUsers()">
+                    <label for="select-all-users">Select All</label>
+                    <button class="btn-verify action-btn" onclick="bulkVerifyUsers()">Bulk Verify</button>
+                    <button class="btn-block action-btn" onclick="bulkBlockUsers()">Bulk Block</button>
+                </div>
+
+                <table class="data-table" id="users-table">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="header-checkbox"></th>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Join Date</th>
+                            <th>Status</th>
+                            <th>Products</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-tbody">
+                        <!-- Users will be loaded here via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Products Tab -->
+        <div id="products-tab" class="tab-content">
+            <div class="content-card">
+                <div class="content-header">
+                    <h2 class="content-title">Product Management</h2>
+                    <div class="search-filter">
+                        <input type="text" class="search-input" placeholder="Search products..." onkeyup="filterProducts(this.value)">
+                        <select class="filter-select" onchange="filterProductsByStatus(this.value)">
+                            <option value="">All Products</option>
+                            <option value="available">Available</option>
+                            <option value="sold">Sold</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="blocked">Blocked</option>
+                        </select>
+                    </div>
+                </div>
+
+                <table class="data-table" id="products-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Seller</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="products-tbody">
+                        <!-- Products will be loaded here via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Verification Tab -->
+        <div id="verification-tab" class="tab-content">
+            <div class="content-card">
+                <div class="content-header">
+                    <h2 class="content-title">Pending Verifications</h2>
+                </div>
+
+                <div id="verification-content">
+                    <!-- Verification content will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Tab -->
+        <div id="reports-tab" class="tab-content">
+            <div class="content-card">
+                <div class="content-header">
+                    <h2 class="content-title">Reports & Analytics</h2>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px;">
+                    <div class="stat-card">
+                        <h3 style="color: #333; margin-bottom: 15px;">User Statistics</h3>
+                        <div style="text-align: left;">
+                            <p>New users this month: <strong id="new-users-month">0</strong></p>
+                            <p>Active users: <strong id="active-users">0</strong></p>
+                            <p>User retention rate: <strong id="retention-rate">0%</strong></p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <h3 style="color: #333; margin-bottom: 15px;">Product Statistics</h3>
+                        <div style="text-align: left;">
+                            <p>Products uploaded this month: <strong id="new-products-month">0</strong></p>
+                            <p>Products sold: <strong id="sold-products">0</strong></p>
+                            <p>Average product price: <strong id="avg-price">₹0</strong></p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <h3 style="color: #333; margin-bottom: 15px;">Category Performance</h3>
+                        <div id="category-stats" style="text-align: left;">
+                            <!-- Category stats will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <h3 style="color: #333; margin-bottom: 20px;">Monthly Activity Chart</h3>
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 15px; text-align: center;">
+                        <p style="color: #666;">Chart placeholder - In production, integrate with Chart.js or similar</p>
+                        <div style="height: 200px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #e9ecef, #f8f9fa); border-radius: 10px; margin-top: 15px;">
+                            <span style="color: #999; font-size: 1.2em;">📊 Analytics Chart</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings-tab" class="tab-content">
+            <div class="content-card">
+                <div class="content-header">
+                    <h2 class="content-title">System Settings</h2>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px;">
+                    <div class="stat-card">
+                        <h3 style="color: #333; margin-bottom: 15px;">Platform Settings</h3>
+                        <div style="text-align: left;">
+                            <label style="display: block; margin-bottom: 10px;">
+                                <input type="checkbox" id="auto-approve-products" checked> Auto-approve new products
+                            </label>
+                            <label style="display: block; margin-bottom: 10px;">
+                                <input type="checkbox" id="require-verification" checked> Require user verification
+                            </label>
+                            <label style="display: block; margin-bottom: 15px;">
+                                <input type="checkbox" id="email-notifications" checked> Send email notifications
+                            </label>
+                            <button class="btn-primary" onclick="saveSettings()">Save Settings</button>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <h3 style="color: #333; margin-bottom: 15px;">Category Management</h3>
+                        <div style="text-align: left;">
+                            <input type="text" id="new-category" placeholder="New category name" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px;">
+                            <input type="text" id="category-icon" placeholder="Category icon (emoji)" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 15px;">
+                            <button class="btn-primary" onclick="addCategory()" style="width: 100%;">Add Category</button>
+                        </div>
+                        <div id="categories-list" style="margin-top: 15px;">
+                            <!-- Categories will be loaded here -->
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <h3 style="color: #333; margin-bottom: 15px;">System Information</h3>
+                        <div style="text-align: left; font-size: 0.9em;">
+                            <p>Version: <strong>1.0.0</strong></p>
+                            <p>Database: <strong>SQLite</strong></p>
+                            <p>Server uptime: <strong id="uptime">--</strong></p>
+                            <p>Last backup: <strong id="last-backup">Never</strong></p>
+                            <button class="btn-secondary" onclick="createBackup()" style="margin-top: 15px;">Create Backup</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for detailed views -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modal-title">Details</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        let selectedUsers = [];
+        
+        // Sample data - In production, this would come from API calls
+        const sampleUsers = [
+            { id: 1, username: 'john_doe', email: 'john@example.com', firstName: 'John', lastName: 'Doe', joinDate: '2024-01-15', verified: true, blocked: false, productsCount: 3 },
+            { id: 2, username: 'jane_smith', email: 'jane@example.com', firstName: 'Jane', lastName: 'Smith', joinDate: '2024-01-20', verified: false, blocked: false, productsCount: 1 },
+            { id: 3, username: 'bob_wilson', email: 'bob@example.com', firstName: 'Bob', lastName: 'Wilson', joinDate: '2024-01-25', verified: true, blocked: false, productsCount: 5 }
+        ];
+
+        const sampleProducts = [
+            { id: 1, title: 'Physics Textbook', seller: 'john_doe', category: 'Books', price: 500, status: 'available', created: '2024-01-16', image: null },
+            { id: 2, title: 'Laptop Stand', seller: 'jane_smith', category: 'Electronics', price: 800, status: 'sold', created: '2024-01-21', image: null },
+            { id: 3, title: 'Study Desk', seller: 'bob_wilson', category: 'Furniture', price: 2000, status: 'available', created: '2024-01-26', image: null }
+        ];
+
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Show/hide tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabName + '-tab').classList.add('active');
+
+            // Load tab-specific data
+            switch(tabName) {
+                case 'users':
+                    loadUsers();
+                    break;
+                case 'products':
+                    loadProducts();
+                    break;
+                case 'verification':
+                    loadVerificationQueue();
+                    break;
+                case 'reports':
+                    loadReports();
+                    break;
+                case 'settings':
+                    loadSettings();
+                    break;
+            }
+        }
+
+        function loadUsers() {
+            const tbody = document.getElementById('users-tbody');
+            tbody.innerHTML = '';
+
+            sampleUsers.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="checkbox" class="user-checkbox" data-user-id="${user.id}"></td>
+                    <td>
+                        <div style="display: flex; align-items: center;">
+                            <div class="user-avatar">${user.firstName[0]}${user.lastName[0]}</div>
+                            <div>
+                                <div style="font-weight: bold;">${user.firstName} ${user.lastName}</div>
+                                <div style="font-size: 0.9em; color: #666;">@${user.username}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${user.email}</td>
+                    <td>${user.joinDate}</td>
+                    <td>
+                        <span class="status-badge ${user.verified ? 'status-verified' : 'status-pending'}">
+                            ${user.verified ? 'Verified' : 'Pending'}
+                        </span>
+                        ${user.blocked ? '<span class="status-badge status-blocked">Blocked</span>' : ''}
+                    </td>
+                    <td>${user.productsCount}</td>
+                    <td>
+                        ${!user.verified ? `<button class="action-btn btn-verify" onclick="verifyUser(${user.id})">Verify</button>` : ''}
+                        <button class="action-btn btn-view" onclick="viewUser(${user.id})">View</button>
+                        <button class="action-btn btn-block" onclick="blockUser(${user.id})">${user.blocked ? 'Unblock' : 'Block'}</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            updateStats();
+        }
+
+        function loadProducts() {
+            const tbody = document.getElementById('products-tbody');
+            tbody.innerHTML = '';
+
+            sampleProducts.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <div style="display: flex; align-items: center;">
+                            ${product.image ? 
+                                `<img src="${product.image}" alt="${product.title}" class="product-image">` : 
+                                '<div class="product-placeholder">📦</div>'
+                            }
+                            <div>
+                                <div style="font-weight: bold;">${product.title}</div>
+                                <div style="font-size: 0.9em; color: #666;">ID: ${product.id}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${product.seller}</td>
+                    <td>${product.category}</td>
+                    <td style="font-weight: bold; color: #27ae60;">₹${product.price}</td>
+                    <td><span class="status-badge status-${product.status}">${product.status}</span></td>
+                    <td>${product.created}</td>
+                    <td>
+                        <button class="action-btn btn-view" onclick="viewProduct(${product.id})">View</button>
+                        <button class="action-btn btn-block" onclick="blockProduct(${product.id})">Block</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function loadVerificationQueue() {
+            const content = document.getElementById('verification-content');
+            const pendingUsers = sampleUsers.filter(user => !user.verified);
+
+            if (pendingUsers.length === 0) {
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">✅</div>
+                        <div class="empty-state-text">All users are verified!</div>
+                    </div>
+                `;
+                return;
+            }
+
+            content.innerHTML = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Registration Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${pendingUsers.map(user => `
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center;">
+                                        <div class="user-avatar">${user.firstName[0]}${user.lastName[0]}</div>
+                                        <div>
+                                            <div style="font-weight: bold;">${user.firstName} ${user.lastName}</div>
+                                            <div style="font-size: 0.9em; color: #666;">@${user.username}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>${user.email}</td>
+                                <td>${user.joinDate}</td>
+                                <td>
+                                    <button class="action-btn btn-verify" onclick="verifyUser(${user.id})">Verify User</button>
+                                    <button class="action-btn btn-block" onclick="rejectUser(${user.id})">Reject</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function loadReports() {
+            // Update statistics
+            document.getElementById('new-users-month').textContent = '12';
+            document.getElementById('active-users').textContent = sampleUsers.filter(u => u.verified).length;
+            document.getElementById('retention-rate').textContent = '85%';
+            document.getElementById('new-products-month').textContent = '28';
+            document.getElementById('sold-products').textContent = sampleProducts.filter(p => p.status === 'sold').length;
+            document.getElementById('avg-price').textContent = '₹' + Math.round(sampleProducts.reduce((sum, p) => sum + p.price, 0) / sampleProducts.length);
+
+            // Load category statistics
+            const categoryStats = document.getElementById('category-stats');
+            const categories = ['Books', 'Electronics', 'Furniture'];
+            categoryStats.innerHTML = categories.map(cat => {
+                const count = sampleProducts.filter(p => p.category === cat).length;
+                return `<p>${cat}: <strong>${count} products</strong></p>`;
+            }).join('');
+        }
+
+        function loadSettings() {
+            // Load categories list
+            const categoriesList = document.getElementById('categories-list');
+            const categories = ['Books 📚', 'Electronics 💻', 'Furniture 🪑', 'Sports ⚽'];
+            categoriesList.innerHTML = categories.map(cat => `
+                <div style="display: flex; justify-content: between; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee;">
+                    <span>${cat}</span>
+                    <button class="btn-danger" onclick="removeCategory('${cat}')" style="padding: 4px 8px; font-size: 0.8em;">Remove</button>
+                </div>
+            `).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('total-users').textContent = sampleUsers.length;
+            document.getElementById('pending-users').textContent = sampleUsers.filter(u => !u.verified).length;
+            document.getElementById('total-products').textContent = sampleProducts.length;
+            document.getElementById('blocked-products').textContent = '0';
+        }
+
+        // User management functions
+        async function verifyUser(userId) {
+            if (confirm('Are you sure you want to verify this user?')) {
+                try {
+                    const response = await fetch(`/admin/verify-user/${userId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken'),
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        showAlert('User verified successfully!', 'success');
+                        loadUsers();
+                    } else {
+                        throw new Error('Failed to verify user');
+                    }
+                } catch (error) {
+                    showAlert('Error verifying user: ' + error.message, 'error');
+                }
+            }
+        }
+
+        function blockUser(userId) {
+            const user = sampleUsers.find(u => u.id === userId);
+            const action = user.blocked ? 'unblock' : 'block';
+            
+            if (confirm(`Are you sure you want to ${action} this user?`)) {
+                user.blocked = !user.blocked;
+                showAlert(`User ${action}ed successfully!`, 'success');
+                loadUsers();
+            }
+        }
+
+        function viewUser(userId) {
+            const user = sampleUsers.find(u => u.id === userId);
+            document.getElementById('modal-title').textContent = 'User Details';
+            document.getElementById('modal-body').innerHTML = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <h4>Personal Information</h4>
+                        <p><strong>Name:</strong> ${user.firstName} ${user.lastName}</p>
+                        <p><strong>Username:</strong> @${user.username}</p>
+                        <p><strong>Email:</strong> ${user.email}</p>
+                        <p><strong>Join Date:</strong> ${user.joinDate}</p>
+                    </div>
+                    <div>
+                        <h4>Account Status</h4>
+                        <p><strong>Verification:</strong> ${user.verified ? '✅ Verified' : '⏳ Pending'}</p>
+                        <p><strong>Status:</strong> ${user.blocked ? '🚫 Blocked' : '✅ Active'}</p>
+                        <p><strong>Products:</strong> ${user.productsCount}</p>
+                    </div>
+                </div>
+                <div style="margin-top: 20px;">
+                    <h4>Recent Activity</h4>
+                    <p>Last login: 2 hours ago</p>
+                    <p>Last product uploaded: 3 days ago</p>
+                    <p>Messages sent: 15</p>
+                </div>
+            `;
+            document.getElementById('detailModal').style.display = 'block';
+        }
+
+        // Product management functions
+        function viewProduct(productId) {
+            const product = sampleProducts.find(p => p.id === productId);
+            document.getElementById('modal-title').textContent = 'Product Details';
+            document.getElementById('modal-body').innerHTML = `
+                <div style="display: grid; grid-template-columns: 200px 1fr; gap: 20px;">
+                    <div>
+                        ${product.image ? 
+                            `<img src="${product.image}" style="width: 100%; border-radius: 10px;" alt="${product.title}">` :
+                            '<div style="width: 100%; height: 150px; background: #f0f0f0; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 2em;">📦</div>'
+                        }
+                    </div>
+                    <div>
+                        <h3>${product.title}</h3>
+                        <p><strong>Seller:</strong> ${product.seller}</p>
+                        <p><strong>Category:</strong> ${product.category}</p>
+                        <p><strong>Price:</strong> ₹${product.price}</p>
+                        <p><strong>Status:</strong> ${product.status}</p>
+                        <p><strong>Created:</strong> ${product.created}</p>
+                        <div style="margin-top: 15px;">
+                            <button class="btn-primary" onclick="approveProduct(${product.id})">Approve</button>
+                            <button class="btn-danger" onclick="blockProduct(${product.id})">Block</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('detailModal').style.display = 'block';
+        }
+
+        function blockProduct(productId) {
+            if (confirm('Are you sure you want to block this product?')) {
+                showAlert('Product blocked successfully!', 'success');
+                loadProducts();
+            }
+        }
+
+        function approveProduct(productId) {
+            showAlert('Product approved successfully!', 'success');
+            loadProducts();
+        }
+
+        // Bulk operations
+        function toggleAllUsers() {
+            const checkboxes = document.querySelectorAll('.user-checkbox');
+            const selectAll = document.getElementById('select-all-users').checked;
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAll;
+            });
+        }
+
+        function bulkVerifyUsers() {
+            const selectedCheckboxes = document.querySelectorAll('.user-checkbox:checked');
+            if (selectedCheckboxes.length === 0) {
+                showAlert('Please select users to verify', 'warning');
+                return;
+            }
+            
+            if (confirm(`Verify ${selectedCheckboxes.length} selected users?`)) {
+                showAlert(`${selectedCheckboxes.length} users verified successfully!`, 'success');
+                loadUsers();
+            }
+        }
+
+        function bulkBlockUsers() {
+            const selectedCheckboxes = document.querySelectorAll('.user-checkbox:checked');
+            if (selectedCheckboxes.length === 0) {
+                showAlert('Please select users to block', 'warning');
+                return;
+            }
+            
+            if (confirm(`Block ${selectedCheckboxes.length} selected users?`)) {
+                showAlert(`${selectedCheckboxes.length} users blocked successfully!`, 'success');
+                loadUsers();
+            }
+        }
+
+        // Filter functions
+        function filterUsers(searchTerm) {
+            const table = document.getElementById('users-table');
+            const rows = table.getElementsByTagName('tr');
+            
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i];
+                const text = row.textContent.toLowerCase();
+                
+                if (text.includes(searchTerm.toLowerCase())) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        }
+
+        function filterUsersByStatus(status) {
+            const table = document.getElementById('users-table');
+            const rows = table.getElementsByTagName('tr');
+            
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i];
+                const statusBadge = row.querySelector('.status-badge');
+                
+                if (status === '' || 
+                    (status === 'verified' && statusBadge.textContent.includes('Verified')) ||
+                    (status === 'pending' && statusBadge.textContent.includes('Pending')) ||
+                    (status === 'blocked' && row.textContent.includes('Blocked'))) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        }
+
+        function filterProducts(searchTerm) {
+            const table = document.getElementById('products-table');
+            const rows = table.getElementsByTagName('tr');
+            
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i];
+                const text = row.textContent.toLowerCase();
+                
+                if (text.includes(searchTerm.toLowerCase())) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        }
+
+        function filterProductsByStatus(status) {
+            const table = document.getElementById('products-table');
+            const rows = table.getElementsByTagName('tr');
+            
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i];
+                const statusBadge = row.querySelector('.status-badge');
+                
+                if (status === '' || statusBadge.textContent.toLowerCase().includes(status)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        }
+
+        // Settings functions
+        function saveSettings() {
+            const autoApprove = document.getElementById('auto-approve-products').checked;
+            const requireVerification = document.getElementById('require-verification').checked;
+            const emailNotifications = document.getElementById('email-notifications').checked;
+            
+            showAlert('Settings saved successfully!', 'success');
+        }
+
+        function addCategory() {
+            const name = document.getElementById('new-category').value.trim();
+            const icon = document.getElementById('category-icon').value.trim();
+            
+            if (!name) {
+                showAlert('Please enter a category name', 'error');
+                return;
+            }
+            
+            showAlert(`Category "${name}" added successfully!`, 'success');
+            document.getElementById('new-category').value = '';
+            document.getElementById('category-icon').value = '';
+            loadSettings();
+        }
+
+        function removeCategory(categoryName) {
+            if (confirm(`Remove category "${categoryName}"?`)) {
+                showAlert(`Category "${categoryName}" removed successfully!`, 'success');
+                loadSettings();
+            }
+        }
+
+        function createBackup() {
+            showAlert('Backup created successfully!', 'success');
+            document.getElementById('last-backup').textContent = new Date().toLocaleString();
+        }
+
+        // Utility functions
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alert-container');
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            
+            alertContainer.innerHTML = '';
+            alertContainer.appendChild(alertDiv);
+            
+            window.scrollTo(0, 0);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').style.display = 'none';
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Modal event handlers
+        window.onclick = function(event) {
+            const modal = document.getElementById('detailModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUsers();
+            updateStats();
+        });
+    </script>
+</body>
+</html>

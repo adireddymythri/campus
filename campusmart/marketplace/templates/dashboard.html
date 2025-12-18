@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusMart - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* --- Reset and body --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+
+        /* --- Navbar --- */
+        .navbar { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 20px rgba(0,0,0,0.1); }
+        .logo { color: #4a90e2; font-size: 1.8em; font-weight: bold; cursor: pointer; }
+        .user-menu { display: flex; align-items: center; gap: 20px; }
+        .user-avatar { width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(135deg, #4a90e2, #357abd); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; transition: transform 0.3s ease; }
+        .user-avatar:hover { transform: scale(1.1); }
+
+        .container { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
+
+        /* --- Welcome --- */
+        .welcome-section { background: rgba(255,255,255,0.95); border-radius: 20px; padding: 30px; margin-bottom: 30px; text-align: center; backdrop-filter: blur(10px); }
+        .welcome-section h1 { color: #333; margin-bottom: 10px; font-size: 2.5em; }
+        .welcome-section p { color: #666; font-size: 1.2em; }
+
+        /* --- Categories --- */
+        .categories-section { margin-bottom: 40px; }
+        .categories-grid { display: flex; gap: 15px; overflow-x: auto; padding: 10px 0; }
+        .category-chip { background: rgba(255,255,255,0.2); color: white; padding: 10px 20px; border-radius: 25px; white-space: nowrap; cursor: pointer; transition: background 0.3s ease; font-weight: 500; }
+        .category-chip:hover, .category-chip.active { background: rgba(255,255,255,0.3); transform: translateY(-2px); }
+
+        /* --- Products grid --- */
+        .products-section h2 { color: white; margin-bottom: 25px; font-size: 2em; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 25px; }
+        .product-card { background: rgba(255,255,255,0.95); border-radius: 2px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; backdrop-filter: blur(10px); display: flex; flex-direction: column; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.2); }
+
+        .product-image {
+        width: 100%;        /* full width of the card */
+        height: 220px;      /* fixed height boundary */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;   /* prevents image from spilling out */
+        background: #f5f7fa;
+        border-bottom: 1px solid #ddd; /* optional border for separation */
+    }
+
+        .product-image img {
+        width: 90%;        /* fits the width of container */
+        height: 100%;       /* fits the height of container */
+        object-fit: contain; /* scales image to fit within box without cropping */
+    }
+
+
+        .product-image .placeholder { font-size: 3em; color: #999; }
+
+        .product-info { padding: 20px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .product-title { font-size: 1.3em; font-weight: bold; color: #333; margin-bottom: 8px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+        .product-category { color: #4a90e2; font-size: 0.9em; margin-bottom: 10px; text-transform: uppercase; font-weight: 600; }
+        .product-price { font-size: 1.4em; font-weight: bold; color: #27ae60; }
+        .product-status { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.8em; font-weight: bold; text-transform: uppercase; margin-top: 10px; }
+        .status-available { background: #d4edda; color: #155724; }
+        .status-sold { background: #f8d7da; color: #721c24; }
+        .status-in-progress { background: #fff3cd; color: #856404; }
+
+        /* --- Floating button --- */
+        .floating-btn { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: linear-gradient(135deg,#4a90e2,#357abd); border-radius: 50%; border: none; color: white; font-size: 24px; cursor: pointer; box-shadow: 0 8px 25px rgba(74,144,226,0.3); transition: transform 0.3s ease; z-index: 1000; }
+        .floating-btn:hover { transform: scale(1.1); }
+
+        .empty-state { text-align: center; color: white; padding: 60px 20px; }
+        .empty-state h3 { font-size: 1.8em; margin-bottom: 15px; opacity: 0.9; }
+        .empty-state p { font-size: 1.1em; opacity: 0.7; }
+
+        @media (max-width:768px) {
+            .products-grid { grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap:20px; }
+            .container { padding:0 15px; }
+            .navbar { padding:15px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo" onclick="window.location.href='/dashboard/'">CampusMart</div>
+        <div class="user-menu">
+            <div class="user-avatar" onclick="window.location.href='/user-details/'" title="User Profile">
+                <i class="fas fa-user"></i>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h1>Welcome back, {{ user.first_name }}!</h1>
+            <p>Discover amazing products from your campus community</p>
+        </div>
+
+        <!-- Categories Section -->
+        <div class="categories-section">
+            <div class="categories-grid">
+                <div class="category-chip" onclick="filterProducts(event,'all')">All</div>
+                {% for category in categories %}
+                    <div class="category-chip" onclick="filterProducts(event,'{{ category.name|lower }}')">{{ category.name }}</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Products Section -->
+        <div class="products-section">
+            <h2>Recent Products</h2>
+            <div class="products-grid" id="products-grid">
+
+
+
+
+
+
+
+
+                
+                {% if products %}
+                    {% for product in products %}
+                        <div class="product-card" data-category="{{ product.category.name|lower }}" onclick="goToProduct('{{ product.id }}')">
+                            <div class="product-image">
+                                {% if product.image %}
+                                    <img src="{{ product.image.url }}" alt="{{ product.title }}">
+                                {% else %}
+                                    <div class="placeholder">📦</div>
+                                {% endif %}
+                            </div>
+                            <div class="product-info">
+                                <div class="product-category">{{ product.category.name }}</div>
+                                <div class="product-title">{{ product.title }}</div>
+                                <div class="product-price">₹{{ product.cost }}</div>
+                                <span class="product-status status-{{ product.status }}">{{ product.get_status_display }}</span>
+                            </div>
+                             
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <h3>No products available</h3>
+                        <p>Be the first to upload a product!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Upload Button -->
+    <button class="floating-btn" onclick="window.location.href='/upload-product/'" title="Upload Product">+</button>
+
+    <script>
+        // Navigate to product detail page
+        function goToProduct(productId) {
+            window.location.href = "/product/" + productId + "/";
+        }
+
+        // Filter products by category
+        function filterProducts(event, category) {
+            document.querySelectorAll('.category-chip').forEach(chip => chip.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.querySelectorAll('.product-card').forEach(card => {
+                const cardCategory = card.dataset.category.trim();
+                if(category === 'all') {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = (cardCategory === category) ? 'block' : 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

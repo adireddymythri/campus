@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - CampusMart</title>
+    <style>
+        /* --- Styles (Same as your previous code) --- */
+        * {margin:0; padding:0; box-sizing:border-box;}
+        body {font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); height:100vh; overflow:hidden;}
+        .navbar {background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);padding:15px 30px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 20px rgba(0,0,0,0.1);z-index:1000;}
+        .logo {color:#4a90e2;font-size:1.8em;font-weight:bold;cursor:pointer;}
+        .user-avatar {width:45px;height:45px;border-radius:50%;background:linear-gradient(135deg,#4a90e2,#357abd);display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;cursor:pointer;}
+        .chat-container {display:flex;height:calc(100vh - 80px);max-width:1400px;margin:0 auto;padding:20px;gap:20px;}
+        .conversations-panel {width:350px;background:rgba(255,255,255,0.95);border-radius:20px;backdrop-filter:blur(15px);box-shadow:0 15px 35px rgba(0,0,0,0.1);overflow:hidden;}
+        .conversations-header {background:linear-gradient(135deg,#4a90e2,#357abd);color:white;padding:20px;text-align:center;}
+        .conversations-header h2 {font-size:1.4em;font-weight:bold;}
+        .conversations-list {height:calc(100% - 70px);overflow-y:auto;padding:0;}
+        .conversation-item {padding:20px;border-bottom:1px solid #f0f0f0;cursor:pointer;transition:all 0.3s ease;display:flex;align-items:center;gap:15px;}
+        .conversation-item:hover {background:#f8f9fa;}
+        .conversation-item.active {background:rgba(74,144,226,0.1);border-left:4px solid #4a90e2;}
+        .conversation-avatar {width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#4a90e2,#357abd);display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:1.2em;}
+        .conversation-info {flex:1;}
+        .conversation-title {font-weight:bold;color:#333;margin-bottom:5px;font-size:1em;}
+        .conversation-subtitle {color:#666;font-size:0.9em;opacity:0.8;}
+        .chat-panel {flex:1;background:rgba(255,255,255,0.95);border-radius:20px;backdrop-filter:blur(15px);box-shadow:0 15px 35px rgba(0,0,0,0.1);display:flex;flex-direction:column;overflow:hidden;}
+        .chat-header {background:linear-gradient(135deg,#4a90e2,#357abd);color:white;padding:20px;display:flex;justify-content:space-between;align-items:center;}
+        .chat-title {font-size:1.4em;font-weight:bold;}
+        .messages-container {flex:1;overflow-y:auto;padding:20px;background:#f8f9fa;}
+        .message {display:flex;margin-bottom:20px;animation:slideInUp 0.3s ease;}
+        .message.own {justify-content:flex-end;}
+        .message-bubble {max-width:70%;padding:15px 20px;border-radius:20px;position:relative;word-wrap:break-word;}
+        .message.own .message-bubble {background:linear-gradient(135deg,#4a90e2,#357abd);color:white;border-bottom-right-radius:5px;}
+        .message:not(.own) .message-bubble {background:white;color:#333;border-bottom-left-radius:5px;box-shadow:0 2px 10px rgba(0,0,0,0.1);}
+        .message-time {font-size:0.8em;opacity:0.7;margin-top:5px;}
+        .message.own .message-time {text-align:right;}
+        .message-input-container {padding:20px;background:white;border-top:1px solid #e9ecef;}
+        .message-input-form {display:flex;gap:15px;align-items:center;}
+        .message-input {flex:1;padding:15px 20px;border:2px solid #e9ecef;border-radius:25px;font-size:16px;outline:none;transition:border-color 0.3s ease;}
+        .message-input:focus {border-color:#4a90e2;}
+        .send-btn {width:50px;height:50px;border:none;border-radius:50%;background:linear-gradient(135deg,#4a90e2,#357abd);color:white;font-size:18px;cursor:pointer;transition:transform 0.3s ease;}
+        .send-btn:hover {transform:scale(1.1);}
+        .empty-chat {display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#666;}
+        .empty-chat-icon {font-size:4em;margin-bottom:20px;opacity:0.5;}
+        .empty-chat-text {font-size:1.2em;font-weight:500;}
+        .back-btn {position:absolute;top:20px;left:20px;background:rgba(255,255,255,0.2);color:white;border:2px solid rgba(255,255,255,0.3);padding:10px 15px;border-radius:20px;text-decoration:none;font-weight:bold;transition:all 0.3s ease;z-index:1001;}
+        .back-btn:hover {background:rgba(255,255,255,0.3);}
+        @keyframes slideInUp {from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);}}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo" onclick="window.location.href='/dashboard/'">CampusMart</div>
+        <div class="user-avatar" onclick="window.location.href='/user-details/'">
+            {% if user.first_name and user.last_name %}
+            {{ user.first_name.0|upper }}{{ user.last_name.0|upper }}
+            {% else %}
+            {{ user.username.0|upper }}
+            {% endif %}
+        </div>
+    </nav>
+
+    <a href="javascript:history.back()" class="back-btn">← Back to Product</a>
+
+    <div class="chat-container">
+        <!-- Conversations List -->
+        <div class="conversations-panel">
+            <div class="conversations-header">
+                <h2>Conversation List</h2>
+            </div>
+            <div class="conversations-list">
+                {% if conversations %}
+                    {% for conversation in conversations %}
+                    <div class="conversation-item {% if conversation == active_conversation %}active{% endif %}" 
+                         onclick="selectConversation('{{ conversation.id }}')">
+                        <div class="conversation-avatar">
+                            {% if user == conversation.seller %}
+                                {{ conversation.buyer.first_name.0|upper }}{{ conversation.buyer.last_name.0|upper }}
+                            {% else %}
+                                {{ conversation.seller.first_name.0|upper }}{{ conversation.seller.last_name.0|upper }}
+                            {% endif %}
+                        </div>
+                        <div class="conversation-info">
+                            <div class="conversation-title">{{ conversation.product.title }}</div>
+                            <div class="conversation-subtitle">
+                                {% if user == conversation.seller %}
+                                Chat with {{ conversation.buyer.first_name }}
+                                {% else %}
+                                Chat with {{ conversation.seller.first_name }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div style="text-align:center;padding:40px;color:#666;">
+                        <div style="font-size:2em;margin-bottom:15px;">💬</div>
+                        <p>No conversations yet</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Chat Window -->
+        <div class="chat-panel">
+            {% if active_conversation %}
+            <div class="chat-header">
+                <div class="chat-title">{{ active_conversation.product.title }} Chat</div>
+            </div>
+
+            <div class="messages-container" id="messages-container">
+                {% for message in messages %}
+                <div class="message {% if message.sender == user %}own{% endif %}">
+                    <div class="message-bubble">
+                        {{ message.content }}
+                        <div class="message-time">{{ message.timestamp|time:"H:i" }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="message-input-container">
+                <form class="message-input-form" onsubmit="sendMessage(event)">
+                    <input type="text" class="message-input" id="message-input" placeholder="Type your message..." required>
+                    <button type="submit" class="send-btn">➤</button>
+                </form>
+            </div>
+            {% else %}
+            <div class="empty-chat">
+                <div class="empty-chat-icon">💬</div>
+                <div class="empty-chat-text">Select a conversation to start chatting</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        const activeConversationId = '{{ active_conversation.id|default:"" }}';
+        const currentUserId = '{{ user.id }}';
+
+        function selectConversation(conversationId) {
+            window.location.href = `/chat/?conversation=${conversationId}`;
+        }
+
+        async function sendMessage(event) {
+            event.preventDefault();
+            if (!activeConversationId) return;
+
+            const messageInput = document.getElementById('message-input');
+            const content = messageInput.value.trim();
+            if (!content) return;
+
+            try {
+                const response = await fetch('/send-message/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({ conversation_id: activeConversationId, content })
+                });
+
+                const data = await response.json();
+                if (data.status === 'success') {
+                    addMessageToChat(data.message, true);
+                    messageInput.value = '';
+                } else alert('Failed to send message');
+            } catch (error) {
+                console.error('Error sending message:', error);
+                alert('Failed to send message');
+            }
+        }
+
+        function addMessageToChat(message, isOwn) {
+            const container = document.getElementById('messages-container');
+            const div = document.createElement('div');
+            div.className = `message ${isOwn ? 'own' : ''}`;
+            div.innerHTML = `
+                <div class="message-bubble">
+                    ${message.content}
+                    <div class="message-time">${message.timestamp}</div>
+                </div>
+            `;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let cookie of cookies) {
+                    cookie = cookie.trim();
+                    if (cookie.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const messagesContainer = document.getElementById('messages-container');
+            if (messagesContainer) messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            const input = document.getElementById('message-input');
+            if (input) {
+                input.addEventListener('keypress', e => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        sendMessage(e);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.title }} - CampusMart</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+        .logo { color: #4a90e2; font-size: 1.8em; font-weight: bold; cursor: pointer; }
+        .user-menu { display: flex; align-items: center; gap: 20px; }
+        .user-avatar {
+            width: 45px; height: 45px; border-radius: 50%;
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: bold; cursor: pointer;
+        }
+
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+
+        .product-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px; overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            animation: slideInUp 0.6s ease forwards;
+        }
+        .product-header { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; padding: 40px; }
+        .product-image-container { position: relative; border-radius: 15px; overflow: hidden; background: #f8f9fa; }
+        .product-image { width: 100%; height: 400px; object-fit: cover; cursor: zoom-in; }
+        .product-image-placeholder { width: 100%; height: 400px; display: flex; align-items: center; justify-content: center; font-size: 4em; color: #ddd; }
+
+        .product-details { display: flex; flex-direction: column; justify-content: space-between; }
+        .product-title { font-size: 2.5em; color: #333; margin-bottom: 15px; font-weight: bold; }
+        .product-category {
+            display: inline-block; background: #4a90e2; color: white;
+            padding: 8px 16px; border-radius: 20px; font-size: 0.9em; font-weight: bold;
+            text-transform: uppercase; margin-bottom: 20px; width: fit-content;
+        }
+        .product-price { font-size: 2.8em; font-weight: bold; color: #27ae60; margin-bottom: 20px; }
+        .product-status { display: inline-block; padding: 10px 20px; border-radius: 25px; font-weight: bold; text-transform: uppercase; margin-bottom: 20px; width: fit-content; }
+        .status-available { background: #d4edda; color: #155724; }
+        .status-sold { background: #f8d7da; color: #721c24; }
+        .status-in-progress { background: #fff3cd; color: #856404; }
+
+        .product-description {
+            background: #f8f9fa; padding: 30px; margin: 0 40px 40px 40px; border-radius: 15px;
+        }
+        .product-description h3 { color: #333; margin-bottom: 15px; font-size: 1.5em; }
+        .product-description p { color: #666; line-height: 1.6; font-size: 1.1em; }
+
+        .seller-info {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 30px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .seller-details h3 { color: #333; margin-bottom: 10px; font-size: 1.3em; }
+        .seller-email { color: #4a90e2; font-weight: 500; }
+
+        .action-buttons { display: flex; gap: 15px; }
+        .btn { padding: 15px 25px; border: none; border-radius: 25px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-block; text-align: center; }
+        .btn-primary { background: linear-gradient(135deg, #4a90e2, #357abd); color: white; }
+        .btn-secondary { background: linear-gradient(135deg, #6c757d, #5a6268); color: white; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); }
+
+        .back-btn { background: rgba(255,255,255,0.2); color: white; border: 2px solid rgba(255,255,255,0.3); padding: 12px 20px; border-radius: 25px; text-decoration: none; font-weight: bold; margin-bottom: 20px; display: inline-block; transition: all 0.3s ease; }
+        .back-btn:hover { background: rgba(255,255,255,0.3); transform: translateY(-2px); }
+
+        @media (max-width: 768px) {
+            .product-header { grid-template-columns: 1fr; gap: 20px; padding: 20px; }
+            .product-title { font-size: 2em; }
+            .product-price { font-size: 2.2em; }
+            .product-description { margin: 0 20px 20px 20px; padding: 20px; }
+            .seller-info { padding: 20px; flex-direction: column; gap: 20px; text-align: center; }
+            .action-buttons { flex-direction: column; width: 100%; }
+            .btn { width: 100%; }
+
+
+        }
+
+                .chat-seller-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            color: white;
+            font-weight: bold;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .chat-seller-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+        }
+
+        .chat-seller-btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+
+        @keyframes slideInUp { from {opacity:0; transform:translateY(30px);} to {opacity:1; transform:translateY(0);} }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo" onclick="window.location.href='/dashboard/'">CampusMart</div>
+        <div class="user-menu">
+            <div class="user-avatar" onclick="window.location.href='/user-details/'">
+                {% if user.first_name and user.last_name %}
+                    {{ user.first_name.0|upper }}{{ user.last_name.0|upper }}
+                {% else %}
+                    {{ user.username.0|upper }}
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="/dashboard/" class="back-btn">← Back to Dashboard</a>
+        
+        <div class="product-container">
+            <div class="product-header">
+                <div class="product-image-container">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.title }}" class="product-image">
+                    {% else %}
+                        <div class="product-image-placeholder">📦</div>
+                    {% endif %}
+                </div>
+                
+                <div class="product-details">
+                    <div>
+                        <h1 class="product-title">{{ product.title }}</h1>
+                        <div class="product-category">{{ product.category.name }}</div>
+                        <div class="product-price">₹{{ product.cost }}</div>
+                        <div class="product-status status-{{ product.status }}">{{ product.get_status_display }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-description">
+                <h3>Description</h3>
+                <p>{{ product.description }}</p>
+            </div>
+
+            <div class="seller-info">
+                <div class="seller-details">
+                    <h3>Seller Information</h3>
+                    <div class="seller-email">{{ product.seller.email }}</div>
+                </div>
+                <div class="action-buttons">
+                    <button class="chat-seller-btn" onclick="startChat('{{ product.id }}', '{{ product.seller.id }}')">
+    💬 Chat with Seller
+</button>
+
+                    <a href="/dashboard/" class="btn btn-secondary">Back to Products</a>
+</div>
+
+                
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        function startChat(productId, sellerId) {
+    // Redirect to chat page with product and seller info as query params
+    window.location.href = `/chat/?product=${productId}&seller=${sellerId}`;
+}
+        document.addEventListener('DOMContentLoaded', function() {
+            const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            const elements = document.querySelectorAll('.product-description, .seller-info');
+            elements.forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'all 0.6s ease';
+                observer.observe(el);
+            });
+
+            const productImage = document.querySelector('.product-image');
+            if (productImage) {
+                productImage.addEventListener('click', function() {
+                    const modal = document.createElement('div');
+                    modal.style.cssText = `
+                        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                        background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center;
+                        z-index: 1000; cursor: pointer;
+                    `;
+                    const zoomedImage = document.createElement('img');
+                    zoomedImage.src = this.src;
+                    zoomedImage.style.cssText = `max-width:90%; max-height:90%; object-fit: contain;`;
+                    modal.appendChild(zoomedImage);
+                    document.body.appendChild(modal);
+                    modal.addEventListener('click', function() { document.body.removeChild(modal); });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

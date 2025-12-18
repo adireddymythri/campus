@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusMart - User Profile</title>
+    <style>
+        /* --- Reset and body --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            min-height: 100vh; 
+        }
+
+        /* --- Navbar --- */
+        .navbar { 
+            background: rgba(255,255,255,0.95); 
+            backdrop-filter: blur(10px); 
+            padding: 15px 30px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1); 
+        }
+        .logo { 
+            color: #4a90e2; 
+            font-size: 1.8em; 
+            font-weight: bold; 
+            cursor: pointer; 
+        }
+        .user-menu { display: flex; align-items: center; gap: 20px; }
+        .user-avatar { 
+            width: 45px; 
+            height: 45px; 
+            border-radius: 50%; 
+            background: linear-gradient(135deg, #4a90e2, #357abd); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: white; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: transform 0.3s ease; 
+        }
+        .user-avatar:hover { transform: scale(1.1); }
+
+        /* --- Container --- */
+        .container { 
+            max-width: 700px; 
+            margin: 50px auto; 
+            background: rgba(255,255,255,0.95); 
+            padding: 40px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+            backdrop-filter: blur(12px); 
+            text-align: center; 
+        }
+
+        /* --- Heading --- */
+        h2 { 
+            font-size: 2.2em; 
+            margin-bottom: 20px; 
+            color: #333; 
+        }
+
+        /* --- Profile info --- */
+        .profile-info { text-align: left; margin-top: 20px; }
+        .profile-info p { 
+            margin: 12px 0; 
+            font-size: 1.1em; 
+            color: #444; 
+        }
+        .profile-label { 
+            font-weight: bold; 
+            color: #4a90e2; 
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo" onclick="window.location.href='/dashboard/'">CampusMart</div>
+        <div class="user-menu">
+            <div class="user-avatar" onclick="window.location.href='/user-details/'">
+                {{ user.first_name.0|upper }}{{ user.last_name.0|upper }}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Profile container -->
+    <div class="container">
+        <h2>{{ user.username }}'s Profile</h2>
+        <div class="profile-info">
+            <p>
+                <span class="profile-label">Full Name:</span> 
+                {{ user.first_name }} {{ user.last_name }} 
+                 ({{ user.username }})
+                </p>
+
+            <p><span class="profile-label">Email:</span> {{ user.email }}</p>
+            <p><span class="profile-label">Phone:</span> {{ user.phone_number }}</p>
+            <p><span class="profile-label">Products Sold:</span> {{ products_sold }}</p>
+            <p><span class="profile-label">Products Bought:</span> {{ products_bought }}</p>
+        </div>
+    </div>
+</body>
+</html>
