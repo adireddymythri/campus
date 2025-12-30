@@ -1,108 +1,495 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CampusMart - User Profile</title>
+    <title>CampusMart | Profile</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        /* --- Reset and body --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-            min-height: 100vh; 
+        :root {
+            --nav-bg: #002f34;
+            --bg-body: #FAF7F2;
+            --card-bg: #FFFFFF;
+            --accent-warm: #EAC8AF;
+            --accent-indigo: #4f46e5;
+            --text-main: #2D2926;
+            --border-soft: #F0EAD6;
+            --stat-val: #C28E6F;
+            --danger: #ef4444;
         }
 
-        /* --- Navbar --- */
-        .navbar { 
-            background: rgba(255,255,255,0.95); 
-            backdrop-filter: blur(10px); 
-            padding: 15px 30px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1); 
-        }
-        .logo { 
-            color: #4a90e2; 
-            font-size: 1.8em; 
-            font-weight: bold; 
-            cursor: pointer; 
-        }
-        .user-menu { display: flex; align-items: center; gap: 20px; }
-        .user-avatar { 
-            width: 45px; 
-            height: 45px; 
-            border-radius: 50%; 
-            background: linear-gradient(135deg, #4a90e2, #357abd); 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            color: white; 
-            font-weight: bold; 
-            cursor: pointer; 
-            transition: transform 0.3s ease; 
-        }
-        .user-avatar:hover { transform: scale(1.1); }
-
-        /* --- Container --- */
-        .container { 
-            max-width: 700px; 
-            margin: 50px auto; 
-            background: rgba(255,255,255,0.95); 
-            padding: 40px; 
-            border-radius: 20px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
-            backdrop-filter: blur(12px); 
-            text-align: center; 
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-body);
+            margin: 0;
+            color: var(--text-main);
         }
 
-        /* --- Heading --- */
-        h2 { 
-            font-size: 2.2em; 
-            margin-bottom: 20px; 
-            color: #333; 
+        /* --- NAVBAR --- */
+        .navbar {
+            background-color: var(--nav-bg);
+            height: 75px;
+            padding: 0 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
-        /* --- Profile info --- */
-        .profile-info { text-align: left; margin-top: 20px; }
-        .profile-info p { 
-            margin: 12px 0; 
-            font-size: 1.1em; 
-            color: #444; 
+        .logo {
+            font-size: 1.7rem;
+            font-weight: 800;
+            cursor: pointer;
+            letter-spacing: -0.5px;
         }
-        .profile-label { 
-            font-weight: bold; 
-            color: #4a90e2; 
+
+        .nav-right {
+            display: flex;
+            gap: 35px;
+            align-items: center;
+        }
+
+        .nav-right a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.05rem;
+            transition: 0.2s;
+        }
+
+        .nav-right a:hover {
+            color: var(--accent-warm);
+        }
+
+        .nav-avatar {
+            width: 42px;
+            height: 42px;
+            background: var(--accent-indigo);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            font-size: 1.1rem;
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .profile-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--border-soft);
+        }
+
+        .profile-pic-large {
+            width: 130px;
+            height: 130px;
+            background: #FFFDF5;
+            color: var(--stat-val);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            font-weight: 700;
+            border: 5px solid var(--accent-warm);
+        }
+
+        .campus-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 20px;
+            font-size: 0.95rem;
+            color: #8C8279;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 22px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+            border: 1px solid var(--border-soft);
+            background: #FFFDF5;
+            text-decoration: none;
+            color: var(--text-main);
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            background: var(--accent-warm);
+            border-color: var(--stat-val);
+        }
+
+        /* Logout Specific */
+        .btn-logout {
+            color: var(--danger);
+            border-color: #FADBD8;
+            background: #FFFDF5;
+        }
+
+        .btn-logout:hover {
+            background: #fff5f5;
+            border-color: var(--danger);
+        }
+
+        /* --- STATS GRID --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 30px 20px;
+            border-radius: 18px;
+            text-align: center;
+            border: 1.5px solid var(--border-soft);
+        }
+
+        .stat-card h2 {
+            font-size: 2.8rem;
+            margin: 0;
+            color: var(--stat-val);
+            font-weight: 800;
+        }
+
+        .stat-card p {
+            margin: 8px 0 0;
+            color: #8C8279;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        /* --- TABS --- */
+        .tabs-container {
+            background: var(--card-bg);
+            border-radius: 20px;
+            border: 1px solid var(--border-soft);
+            overflow: hidden;
+        }
+
+        .tabs-nav {
+            display: flex;
+            background: #FFFDF5;
+            border-bottom: 1px solid var(--border-soft);
+        }
+
+        .tab-btn {
+            padding: 20px 35px;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #A39B94;
+            cursor: pointer;
+            border: none;
+            background: none;
+            border-bottom: 4px solid transparent;
+        }
+
+        .tab-btn.active {
+            color: var(--stat-val);
+            border-bottom-color: var(--stat-val);
+            background: white;
+        }
+
+        .tab-content {
+            padding: 80px 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* --- MODAL --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 47, 52, 0.4);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-card {
+            background: white;
+            padding: 35px;
+            border-radius: 20px;
+            width: 95%;
+            max-width: 550px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border: 2px solid var(--border-soft);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+            color: var(--stat-val);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1.5px solid var(--border-soft);
+            background: #FFFDF5;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--stat-val);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
         }
     </style>
 </head>
+
 <body>
-    <!-- Navbar -->
+
     <nav class="navbar">
-        <div class="logo" onclick="window.location.href='/dashboard/'">CampusMart</div>
-        <div class="user-menu">
-            <div class="user-avatar" onclick="window.location.href='/user-details/'">
-                {{ user.first_name.0|upper }}{{ user.last_name.0|upper }}
-            </div>
+        <div class="logo" onclick="location.href='{% url 'dashboard' %}'">CampusMart</div>
+        <div class="nav-right">
+            <a href="{% url 'dashboard' %}">Dashboard</a>
+            <a href="{% url 'chat_system' %}">Messages</a>
+            <div class="nav-avatar">{{ user.username.0|upper }}</div>
         </div>
     </nav>
 
-    <!-- Profile container -->
-    <div class="container">
-        <h2>{{ user.username }}'s Profile</h2>
-        <div class="profile-info">
-            <p>
-                <span class="profile-label">Full Name:</span> 
-                {{ user.first_name }} {{ user.last_name }} 
-                 ({{ user.username }})
-                </p>
+    <div class="main-content">
+        <div class="profile-card">
+            <div class="profile-pic-large">{{ user.username.0|upper }}</div>
+            <div style="flex-grow: 1;">
+                <h1 style="margin:0; font-size: 2.2rem; color: var(--text-main);">{{ user.username|title }}</h1>
 
-            <p><span class="profile-label">Email:</span> {{ user.email }}</p>
-            <p><span class="profile-label">Phone:</span> {{ user.phone_number }}</p>
-            <p><span class="profile-label">Products Sold:</span> {{ products_sold }}</p>
-            <p><span class="profile-label">Products Bought:</span> {{ products_bought }}</p>
+                <div class="campus-info-grid">
+                    <div class="info-item"><i data-lucide="mail" size="16"></i> {{ user.email }}</div>
+                    <div class="info-item"><i data-lucide="phone" size="16"></i> {{user.phone_number|default:"No Phone"}}</div>
+                    <div class="info-item"><i data-lucide="school" size="16"></i> {{ user.college_name|default:"College Not Set" }}</div>
+                    <div class="info-item"><i data-lucide="id-card" size="16"></i> ID: {{ user.college_id|default:"---" }}</div>
+                    <div class="info-item"><i data-lucide="book-open" size="16"></i> {{ user.branch|default:"Branch" }}</div>
+                    <div class="info-item"><i data-lucide="home" size="16"></i> {{ user.hostel_block|default:"Block" }} - {{ user.room_no|default:"Rm" }}</div>
+                </div>
+
+                <div class="action-btns">
+                    <button class="btn" onclick="openModal()"><i data-lucide="settings" size="18"></i> Edit
+                        Profile</button>
+
+                    <form action="{% url 'logout' %}" method="POST" style="margin: 0;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-logout">
+                            <i data-lucide="log-out" size="18"></i> Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h2>{{ published_count|default:"0" }}</h2>
+                <p>Published Ads</p>
+            </div>
+            <div class="stat-card">
+                <h2>{{ purchased_count|default:"0" }}</h2>
+                <p>Purchased</p>
+            </div>
+            <div class="stat-card">
+                <h2>{{ favorite_count|default:"0" }}</h2>
+                <p>Favorites</p>
+            </div>
+        </div>
+
+        <div class="tabs-container">
+            <div class="tabs-nav">
+                <button class="tab-btn active" onclick="switchTab(event, 'active-ads')">Active Ads</button>
+                <button class="tab-btn" onclick="switchTab(event, 'favorites')">Favorites</button>
+                <button class="tab-btn" onclick="switchTab(event, 'archived')">Archived</button>
+                <button class="tab-btn" onclick="location.href='{% url 'chat_system' %}'">Messages</button>
+            </div>
+
+            <div id="active-ads" class="tab-content active">
+                <i data-lucide="cookie" size="64" style="color: var(--accent-warm); margin-bottom: 20px;"></i>
+                <h3 style="color: var(--stat-val);">Freshly Baked Ads</h3>
+                {% if published_count > 0 %}
+                <p>You have {{ published_count }} active listings.</p>
+                {% else %}
+                <p>You haven't posted any items yet.</p>
+                {% endif %}
+                <a href="{% url 'upload_product' %}" class="btn"
+                    style="display:inline-flex; margin-top:15px; background: var(--stat-val); color: white; border: none;">Post
+                    New Ad</a>
+            </div>
+
+            <div id="favorites" class="tab-content">
+                <i data-lucide="heart" size="64" style="color: var(--danger); margin-bottom: 20px;"></i>
+                <h3 style="color: var(--stat-val);">Your Favorites</h3>
+
+                {% if favorites %}
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; text-align: left; margin-top: 20px;">
+                    {% for fav in favorites %}
+                    <div style="background: white; border-radius: 12px; padding: 10px; border: 1px solid var(--border-soft); cursor: pointer;"
+                        onclick="location.href='{% url 'product_details' fav.product.id %}'">
+                        <div
+                            style="height: 150px; background: #f8f9fa; border-radius: 8px; margin-bottom: 10px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                            {% if fav.product.image %}
+                            <img src="{{ fav.product.image.url }}"
+                                style="width: 100%; height: 100%; object-fit: cover;">
+                            {% else %}
+                            <span style="font-size: 2em;">📦</span>
+                            {% endif %}
+                        </div>
+                        <h4 style="margin: 0; font-size: 1rem; color: var(--text-main);">{{ fav.product.title }}</h4>
+                        <p style="margin: 5px 0 0; color: var(--stat-val); font-weight: bold;">₹{{ fav.product.cost }}
+                        </p>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p>You haven't added any favorites yet.</p>
+                <a href="{% url 'dashboard' %}" class="btn" style="display:inline-flex; margin-top:15px;">Browse
+                    Products</a>
+                {% endif %}
+            </div>
+
+            <div id="archived" class="tab-content">
+                <i data-lucide="history" size="64" style="color: var(--accent-warm);"></i>
+                <h3>Past Listings</h3>
+                <p>Sold or removed items appear here.</p>
+            </div>
         </div>
     </div>
+
+    <div id="editModal" class="modal-overlay">
+        <div class="modal-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h2 style="margin:0; color:var(--stat-val);">Campus Profile</h2>
+                <button onclick="closeModal()"
+                    style="background:none; border:none; font-size:24px; cursor:pointer; color:#8C8279;">&times;</button>
+            </div>
+
+            <form action="{% url 'update_profile' %}" method="POST">
+                {% csrf_token %}
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" name="first_name" value="{{ user.first_name }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="text" name="phone" value="{{ user.phone_number|default:'' }}">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>College Name</label>
+                        <input type="text" name="college_name" value="{{ user.college_name|default:'' }}">
+                    </div>
+                    <div class="form-group">
+                        <label>College ID No.</label>
+                        <input type="text" name="college_id" value="{{ user.college_id|default:'' }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Branch / Dept</label>
+                        <input type="text" name="branch" value="{{ user.branch|default:'' }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Hostel Block</label>
+                        <input type="text" name="hostel_block" value="{{ user.hostel_block|default:'' }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Room No.</label>
+                        <input type="text" name="room_no" value="{{ user.room_no|default:'' }}">
+                    </div>
+                </div>
+                <button type="submit" class="save-btn">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        function switchTab(event, tabId) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        function openModal() { document.getElementById('editModal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('editModal').style.display = 'none'; }
+
+        window.onclick = function (event) {
+            if (event.target == document.getElementById('editModal')) closeModal();
+        }
+    </script>
 </body>
+
 </html>

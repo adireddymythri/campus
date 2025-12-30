@@ -1,0 +1,414 @@
+/* Theme variables and dashboard styles (extracted from dashboard.html) */
+/* Import Inter as a fallback if not loaded from the template */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+/* Primary and alternate color tokens */
+:root {
+    --bg-main: #F8FAFC;      /* Main Background (Soft Slate recommended) */
+    --bg-alt: #F8FAFC;       /* Lighter accent (used for subtle gradients) */
+    --bg-card: #FFFFFF;      /* card background */
+
+    /* Welcome gradient colors */
+    --welcome-start: #1E40AF; /* deep blue start */
+    --welcome-end: #3B82F6;   /* royal blue end */
+
+    --nav: rgba(15,23,42,0.95); /* rich slate header (with blur) */
+    --text-main: #1E293B;    /* heading & primary text */
+    --text-body: #475569;    /* body text (slate gray) */
+    --accent-blue: #3B82F6;  /* primary action */
+    --accent-indigo: #6366F1; /* hover / highlight */
+
+    /* Price and success */
+    --price-color: #059669;  /* emerald price */
+    --success-green: #166534;/* used for available text */
+    --available-bg: #DCFCE7; /* soft emerald background for available badge */
+
+    /* Periwinkle border for cards and subtle tints */
+    --periwinkle: #E2E8F0;
+    --product-footer-bg: #F9FAFB;
+
+    /* Category chips */
+    --chip-inactive: #EFF6FF;/* light blue background */
+    --chip-text: #1E40AF;     /* dark blue text for chips */
+
+    /* UI tokens for forms and components */
+    --btn-bg: #4F46E5;
+    --btn-text: #ffffff;
+    --btn-bg-ghost: rgba(59,130,246,0.08);
+    --input-bg: #FFFFFF;
+    --input-border: rgba(15,23,42,0.08);
+    --input-focus: rgba(59,130,246,0.18);
+    --input-placeholder: #9AA3B2;
+
+    /* Dark mode tokens (toggle with .theme-dark on body) */
+    --dark-bg: #0F172A;
+    --dark-card: #1E293B;
+    --dark-text: #F8FAFC;
+} 
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-main); color: var(--text-body); min-height: 100vh; -webkit-font-smoothing:antialiased; }
+
+/* Welcome gradient style (applies to .welcome-container) */
+.welcome-container {
+    background: linear-gradient(135deg, #6366F1 0%, #A855F7 100%);
+    color: #ffffff;
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+    animation: fadeInDown 0.8s ease-out;
+}
+.welcome-container h1 { color: #ffffff; }
+.welcome-container p { color: #E0E7FF; font-size: 1.03em; }
+.welcome-container .welcome-name { color: #fff; }
+
+/* Highlight for user name */
+.name-highlight { color: #fbbf24; font-weight: 800; }
+
+/* Additional welcome-box (legacy class kept for compatibility) */
+.welcome-box {
+  background: linear-gradient(135deg, var(--welcome-start) 0%, var(--welcome-end) 100%);
+  color: #ffffff;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 10px 15px -3px rgba(59,130,246,0.2);
+}
+.welcome-box h1 { color: #ffffff; }
+.welcome-box p { color: #E0E7FF; }
+.welcome-box .welcome-name { color: #ffffff; font-weight: 800; }
+
+/* Optional nice gradient background if you prefer the 'Academic Gradient' */
+body.theme-gradient { background: linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%); }
+
+/* Dark mode: add `theme-dark` class to <body> to enable */
+body.theme-dark { background-color: var(--dark-bg); color: var(--dark-text); }
+body.theme-dark .product-card { background: var(--dark-card); color: var(--dark-text); box-shadow: 0 8px 18px rgba(2,6,23,0.6); }
+body.theme-dark .navbar { background: rgba(2,6,23,0.9); }
+body.theme-dark .category-chip { background: rgba(255,255,255,0.04); color: var(--dark-text); }
+body.theme-dark .category-chip.active { box-shadow: 0 8px 20px rgba(59,130,246,0.12); }
+
+/* Subtle blue glow tint option to tie the brand together */
+body::after { content: ""; position: fixed; inset: 0; pointer-events: none; background: radial-gradient(1200px 400px at 85% 15%, rgba(240,247,255,0.4), transparent 20%); z-index: 0; } 
+
+/* --- Navbar (Header) --- */
+.navbar {
+    background: var(--nav);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: #fff;
+    padding: 14px 26px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(2,6,23,0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    position: sticky; top: 0; z-index: 100;
+}
+.logo { color: #fff; font-size: 1.85em; font-weight: 700; cursor: pointer; letter-spacing: -0.5px; }
+.user-menu { display: flex; align-items: center; gap: 16px; }
+.user-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg,#2f6ef6,#1d4ed8); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; cursor: pointer; transition: transform 0.15s ease; }
+.user-avatar:hover { transform: scale(1.05); }
+
+.container { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
+
+/* --- Welcome --- */
+:root {
+    --hero-start: #6366F1; /* indigo gradient start */
+    --hero-end: #4F46E5;   /* indigo gradient end */
+}
+.welcome-section {
+    background: rgba(255,255,255,0.72);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 14px;
+    padding: 30px;
+    margin-bottom: 22px;
+    text-align: left;
+    box-shadow: 0 6px 18px rgba(2,6,23,0.04);
+    position: relative;
+    overflow: hidden;
+}
+/* subtle indigo wash behind the glass hero */
+.welcome-section::before {
+    content: "";
+    position: absolute;
+    top: -20%; left: -10%; right: -10%; height: 180%;
+    background: linear-gradient(120deg, rgba(99,102,241,0.12), rgba(79,70,229,0.10));
+    transform: rotate(-6deg);
+    filter: blur(18px);
+    pointer-events: none;
+}
+.welcome-section h1 { color: var(--text-main); margin-bottom: 8px; font-size: 1.9em; }
+.welcome-name { color: var(--accent-blue); font-weight: 800; padding-left: 4px; }
+.welcome-section p { color: var(--text-body); font-size: 1.03em; }
+
+/* --- Categories --- */
+.categories-section { margin-bottom: 26px; }
+.categories-grid { display: flex; gap: 12px; overflow-x: auto; padding: 10px 0; }
+.category-chip {
+    background: #ffffff;
+    color: var(--chip-text);
+    padding: 10px 18px;
+    border-radius: 24px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 600;
+    border: 1px solid var(--periwinkle);
+    box-shadow: 0 1px 2px rgba(2,6,23,0.03);
+}
+.category-chip:hover { transform: translateY(-3px); background-color: var(--accent-indigo); color: #fff; }
+.category-chip.active { background: var(--accent-indigo); color: #fff; box-shadow: 0 8px 20px rgba(99,102,241,0.12); border-color: var(--accent-indigo); }
+/* Category label badges inside product cards */
+.category-label { display:inline-block; padding:6px 10px; border-radius:999px; font-weight:700; font-size:0.75rem; text-transform:uppercase; }
+.category-electronics { background:#eff6ff; color:#1E3A8A; }
+.category-books { background:#fffbeb; color:#7C2D12; }
+.category-others { background:#f0fdf4; color:#14532d; }
+
+/* Card bottom tint by category (applied to .info-footer via a class on the card) */
+.card-electronics .info-footer { background: #eff6ff; }
+.card-books .info-footer { background: #fffaf0; }
+.card-others .info-footer { background: #f0fdf4; }
+
+/* --- Products grid --- */
+.products-section h2 { color: var(--text-main); margin-bottom: 18px; font-size: 1.55em; }
+.products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 20px; }
+..product-card {
+    background: var(--bg-card);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer; display: flex; flex-direction: column;
+    border: 1px solid var(--periwinkle);
+}
+.product-card:hover { transform: translateY(-8px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); border-color: var(--accent-indigo); }
+
+/* Active / click (shrink-and-pop) */
+.product-card:active { transform: scale(0.95); box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+
+.product-image { width: 100%; height: 200px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--bg-main); border-bottom: 1px solid rgba(15,23,42,0.03); }
+.product-image img { width: 90%; height: 100%; object-fit: contain; }
+.product-image .placeholder { font-size: 3em; color: #9AA3B2; }
+
+.product-info { padding: 18px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+.product-info .info-main { display:block; }
+.product-info .info-footer { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px; margin-top:12px; background: var(--product-footer-bg); border-radius: 8px; }
+.product-title { font-size: 1.15em; font-weight: 700; color: var(--text-main); margin-bottom: 6px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+.product-category { color: var(--accent-indigo); font-size: 0.85em; margin-bottom: 8px; text-transform: uppercase; font-weight: 700; }
+.product-price { font-size: 1.18em; font-weight: 700; color: var(--price-color); }
+.product-status { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; margin-top: 10px; }
+.status-available { background: #DCFCE7; color: #166534; }
+.status-sold { background: #FEF2F2; color: #7F1D1D; }
+.status-in-progress { background: #FFFBEB; color: #92400E; }
+
+/* --- Form controls & UI elements --- */
+.form-group { margin-bottom: 12px; }
+label { display: block; font-weight: 600; color: var(--text-main); margin-bottom: 6px; font-size: 0.95rem; }
+input[type="text"], input[type="number"], input[type="email"], input[type="search"], select, textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--input-border);
+    background: var(--input-bg);
+    color: var(--text-main);
+    font-size: 0.95rem;
+    outline: none;
+    transition: box-shadow .12s ease, border-color .12s ease;
+}
+input::placeholder, textarea::placeholder { color: var(--input-placeholder); }
+input:focus, textarea:focus, select:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 6px 18px var(--input-focus);
+    outline: none;
+}
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 14px; border-radius: 10px; font-weight: 600; cursor: pointer; border: none; }
+.btn-primary { background: var(--btn-bg); color: var(--btn-text); box-shadow: 0 6px 18px rgba(59,130,246,0.12); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(59,130,246,0.18); }
+.btn-outline { background: transparent; color: var(--text-main); border: 1px solid var(--input-border); }
+
+.form-error { color: #b91c1c; font-size: 0.9rem; margin-top: 6px; }
+.small-muted { font-size: 0.9rem; color: var(--text-body); }
+
+
+/* --- Floating button (action) --- */
+.floating-btn { position: fixed; bottom: 28px; right: 28px; width: 56px; height: 56px; background: var(--btn-bg); border-radius: 12px; border: none; color: white; font-size: 24px; cursor: pointer; box-shadow: 0 8px 30px rgba(79,70,229,0.18); transition: transform 0.18s ease; z-index: 1000; display: flex; align-items: center; justify-content: center; }
+.floating-btn:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(79,70,229,0.18); }
+
+.empty-state { text-align: center; color: var(--text-body); padding: 50px 20px; }
+.empty-state h3 { font-size: 1.3em; margin-bottom: 8px; color: var(--text-main); }
+.empty-state p { font-size: 1em; opacity: 0.9; }
+
+/* Ripple effect for click feedback and ensure positioning */
+.product-card { position: relative; }
+.product-card .ripple {
+    position: absolute;
+    border-radius: 50%;
+    transform: scale(0);
+    background: rgba(15,23,42,0.06);
+    animation: ripple 0.6s ease-out forwards;
+    pointer-events: none;
+    opacity: 0.9;
+}
+@keyframes ripple {
+    to { transform: scale(4); opacity: 0; }
+}
+
+/* Availability badge pulse */
+.status-badge {
+    animation: pulse 2s infinite;
+}
+@keyframes pulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.03); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* Fade-in-down animation for welcome hero */
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Fade-in-up animation for product cards */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Product card entrance animation & staggered feel */
+.product-card {
+  animation: fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.product-card:nth-child(odd) {
+  animation-delay: 0.04s;
+  transform: translateY(0);
+}
+.product-card:nth-child(even) {
+  animation-delay: 0.12s;
+  transform: translateY(6px);
+  background: linear-gradient(180deg, var(--bg-card) 0%, rgba(99,102,241,0.02) 100%);
+  border-color: rgba(99,102,241,0.06);
+}
+
+/* Slightly different hover for even cards to add visual rhythm */
+.product-card:nth-child(even):hover {
+  transform: translateY(-12px) rotate(-0.4deg);
+  box-shadow: 0 26px 38px -10px rgba(0,0,0,0.12);
+  border-color: var(--accent-indigo);
+}
+
+/* Accessibility focus state */
+.product-card:focus { outline: none; box-shadow: 0 0 0 4px rgba(99,102,241,0.12); }
+
+@media (max-width:768px) {
+    .products-grid { grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:16px; }
+    .container { padding: 0 15px; }
+    .navbar { padding: 12px 18px; }
+}
+
+/* -------------------------------------------------------------------------
+   Product Details Page Styles (moved from inline template)
+   These are page-scoped using the `.product-page` body class to avoid
+   globally overriding dashboard styles.
+   ------------------------------------------------------------------------- */
+.product-page { background-color: #F9FAFB; }
+
+.product-page .navbar { background-color: #111827 !important; padding: 1rem 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-bottom:1px solid rgba(255,255,255,0.02); }
+.product-page .logo, .product-page .navbar-brand { color: #ffffff !important; font-weight: 700; }
+
+.product-page .product-main-card {
+    background: #ffffff;
+    border-radius: 20px;
+    border: 1px solid #E5E7EB;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+    margin-top: 2rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-page .product-details-container { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.product-page .product-details-container:hover { transform: translateY(-5px); box-shadow: 0 12px 20px rgba(2,6,23,0.06); }
+
+.product-page .breadcrumbs { color: #6B7280; font-size: 0.95rem; margin-bottom: 12px; }
+.product-page .breadcrumbs .breadcrumb-link { color: #6B7280; text-decoration: none; margin-right: 8px; }
+.product-page .breadcrumbs .breadcrumb-current { color: #111827; font-weight: 700; }
+
+.product-page .product-header { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; padding: 32px; }
+.product-page .product-image-container { position: relative; border-radius: 12px; overflow: hidden; background: #ffffff; }
+.product-page .product-image { width: 100%; height: 400px; object-fit: cover; cursor: zoom-in; border-radius: 12px; transition: transform 0.45s ease; border: 1px solid #E5E7EB; }
+.product-page .product-image:hover { transform: scale(1.05); }
+
+.product-page .product-title { font-size: 2.2em; color: #111827; margin-bottom: 10px; font-weight: 700; }
+
+.product-page .badge-category { background-color: #EFF6FF; color: #1E40AF; border-radius: 6px; padding: 4px 12px; font-size: 0.75rem; font-weight:700; text-transform:uppercase; display:inline-block; margin-bottom:14px; }
+
+/* Chat button that mirrors dashboard CTA */
+.product-page .chat-btn {
+    background: #3b82f6; color: #fff; padding: 12px 22px; border-radius: 28px; border: none; font-weight: 700; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 6px 18px rgba(59,130,246,0.12);
+}
+.product-page .chat-btn:hover { background: #2563eb; transform: translateY(-2px); box-shadow: 0 10px 24px rgba(59,130,246,0.18); }
+.product-page .chat-btn:active { transform: scale(0.95); }
+
+/* Back secondary button (slate grey) with leftward hover slide */
+.product-page .btn-back-secondary { background: #4B5563; color: #fff; padding: 10px 18px; border-radius: 8px; display:inline-block; text-decoration:none; transition: transform 0.18s ease, box-shadow 0.18s ease; border:none; }
+.product-page .btn-back-secondary:hover { transform: translateX(-6px); box-shadow: 0 8px 20px rgba(15,23,42,0.06); }
+
+.product-page .btn-back { background: rgba(255,255,255,0.16); color: #111827; border: 1px solid rgba(255,255,255,0.18); padding: 8px 12px; border-radius: 6px; text-decoration: none; font-weight: 600; margin-bottom: 12px; display: inline-block; transition: all 0.2s ease; backdrop-filter: blur(4px); }
+
+.product-page .product-price { font-size: 2rem; font-weight: 700; color: #10B981; margin-bottom: 14px; }
+
+.product-page .product-description { background: #F9FAFB; padding: 24px; margin: 0 24px 24px 24px; border-radius: 12px; }
+
+.product-page .seller-footer { background-color: #F1F5F9; border-top: 1px solid #E2E8F0; padding: 16px; display: flex; justify-content: space-between; align-items: center; }
+.product-page .seller-details { display:flex; align-items:center; gap:12px; }
+.product-page .seller-avatar { width:44px; height:44px; border-radius:50%; background:#4F46E5; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; margin-right:12px; font-size:0.9em; }
+.product-page .seller-email { color: #4F46E5; font-weight: 600; text-decoration: none; }
+
+/* Status badge pulse animation */
+@keyframes status-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+.product-page .available-badge { background-color: #DCFCE7; color: #166534; animation: status-pulse 2s infinite ease-in-out; padding: 6px 14px; border-radius: 999px; font-weight:700; display:inline-block; }
+
+/* Accessibility: focus outlines for interactive elements */
+.product-page .btn-primary-custom:focus, .product-page .btn-back:focus, .product-page .breadcrumb-link:focus { outline: 3px solid rgba(59,130,246,0.16); outline-offset: 2px; }
+
+/* Navigation Spacing Fix */
+.nav-btn {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    padding: 8px 16px;
+    background: white;
+    border-radius: 50px;
+    border: 1px solid var(--periwinkle);
+    color: var(--text-body);
+    transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+    color: var(--accent-indigo);
+    border-color: var(--accent-indigo);
+    transform: translateY(-2px);
+}
+
+.nav-sep {
+    margin: 0 12px;
+    color: #cbd5e1;
+}
+
+/* Chat Status and Send Button UI */
+.send-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* Distance between icon and text if you add text */
+}
+
+.conversation-item {
+    gap: 15px; /* Ensures distance between avatar and name */
+}

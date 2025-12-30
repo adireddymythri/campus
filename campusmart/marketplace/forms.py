@@ -3,17 +3,18 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import User, Product, Category
 from django.contrib.auth.forms import AuthenticationForm
 
+from django.utils.text import slugify
+
 class UserRegistrationForm(UserCreationForm):
+    name = forms.CharField(max_length=150, required=True)
     email = forms.EmailField(required=True)
-    first_name = forms.CharField(max_length=30, required=True)
-    last_name = forms.CharField(max_length=30, required=True)
     phone_number = forms.CharField(max_length=15, required=False)
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
 
     class Meta:
         model = User
-        fields = ('username','first_name','last_name','email','phone_number','password1','password2')
+        fields = ('name','email','phone_number','password1','password2')
     
     def clean(self):
         cleaned_data = super().clean()
@@ -24,9 +25,17 @@ class UserRegistrationForm(UserCreationForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
-        user.first_name = self.cleaned_data['first_name']
-        user.last_name = self.cleaned_data['last_name']
+        user.name = self.cleaned_data['name']
         user.phone_number = self.cleaned_data['phone_number']
+        # generate a unique username from name or email
+        base = slugify(user.name) or (user.email.split('@')[0] if user.email else 'user')
+        candidate = base
+        i = 0
+        from .models import User as UserModel
+        while UserModel.objects.filter(username=candidate).exists():
+            i += 1
+            candidate = f"{base}{i}"
+        user.username = candidate
         user.set_password(self.cleaned_data['password1'])
         if commit:
             user.save()

@@ -24,8 +24,7 @@
     <div class="container">
         <!-- Welcome Section -->
         <div class="welcome-section welcome-container">
-            <h1>Welcome back, <span class="welcome-name"><span class="name-highlight">{{ user.first_name
-                        }}</span></span>!</h1>
+            <h1>Welcome back, <span class="welcome-name"><span class="name-highlight">{{ user.first_name }}</span></span>!</h1>
             <p>Discover amazing products from your campus community</p>
         </div>
 
@@ -34,8 +33,7 @@
             <div class="categories-grid">
                 <div class="category-chip" onclick="filterProducts(event,'all')">All</div>
                 {% for category in categories %}
-                <div class="category-chip" onclick="filterProducts(event,'{{ category.name|lower }}')">{{ category.name
-                    }}</div>
+                <div class="category-chip" onclick="filterProducts(event,'{{ category.name|lower }}')">{{ category.name }}</div>
                 {% endfor %}
             </div>
         </div>
@@ -63,15 +61,13 @@
                     <div class="product-info">
                         <div class="info-main">
                             <div class="product-category"><span
-                                    class="category-label category-{{ product.category.name|lower }}">{{
-                                    product.category.name }}</span></div>
+                                    class="category-label category-{{ product.category.name|lower }}">{{ product.category.name }}</span></div>
                             <div class="product-title">{{ product.title }}</div>
                         </div>
                         <div class="info-footer">
                             <div class="product-price">₹{{ product.cost }}</div>
                             <div>
-                                <span class="product-status status-{{ product.status }} status-badge">{{
-                                    product.get_status_display }}</span>
+                                <span class="product-status status-{{ product.status }} status-badge">{{ product.get_status_display }}</span>
                             </div>
                         </div>
                     </div>

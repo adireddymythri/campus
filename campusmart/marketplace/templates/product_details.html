@@ -1,48 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load static %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ product.title }} - CampusMart</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* 1. Global Background (Match Dashboard) */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', sans-serif;
+            background-color: #F9FAFB; /* Clean off-white */
             min-height: 100vh;
+        }
+        /* Page wrapper provides top spacing, content sits on soft background */
+        .details-page-wrapper {
+            background-color: transparent;
+            min-height: 100vh;
+            padding: 40px 20px;
         }
 
         .navbar {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 15px 30px;
+            background-color: #111827 !important; /* Deep Navy */
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
-        .logo { color: #4a90e2; font-size: 1.8em; font-weight: bold; cursor: pointer; }
+        .logo, .navbar-brand { color: #ffffff !important; font-weight: 700; font-size: 1.8em; cursor: pointer; }
         .user-menu { display: flex; align-items: center; gap: 20px; }
-        .user-avatar {
-            width: 45px; height: 45px; border-radius: 50%;
-            background: linear-gradient(135deg, #4a90e2, #357abd);
-            display: flex; align-items: center; justify-content: center;
-            color: white; font-weight: bold; cursor: pointer;
-        }
+        .user-avatar { width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(135deg, #4F46E5, #4338CA); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; }
+        
 
         .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
 
-        .product-container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px; overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            animation: slideInUp 0.6s ease forwards;
+        .product-container, .product-details-card, .product-main-card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #E5E7EB;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            margin-top: 2rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        .product-header { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; padding: 40px; }
-        .product-image-container { position: relative; border-radius: 15px; overflow: hidden; background: #f8f9fa; }
-        .product-image { width: 100%; height: 400px; object-fit: cover; cursor: zoom-in; }
-        .product-image-placeholder { width: 100%; height: 400px; display: flex; align-items: center; justify-content: center; font-size: 4em; color: #ddd; }
+        .product-details-container { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .product-details-container:hover { transform: translateY(-5px); box-shadow: 0 12px 20px rgba(2,6,23,0.06); }
+
+        /* Extracted UI rules (breadcrumbs, icons, image elevation, action buttons) moved to: marketplace/static/marketplace/css/product.css */
+
+        .product-header { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; padding: 32px; }
+        .product-image-container { position: relative; border-radius: 12px; overflow: hidden; background: #ffffff; }
+        .product-image { width: 100%; height: 400px; object-fit: cover; cursor: zoom-in; border-radius: 12px; transition: transform 0.45s ease; }
+        .product-image:hover { transform: scale(1.03); }
+        .product-image-placeholder { width: 100%; height: 400px; display: flex; align-items: center; justify-content: center; font-size: 4em; color: #ddd; } 
+
+        .product-title { font-size: 2.2em; color: #111827; margin-bottom: 10px; font-weight: 700; }
+
+        .badge-category { background-color: #EFF6FF; color: #1E40AF; border-radius: 6px; padding: 4px 12px; font-size: 0.75rem; font-weight:700; text-transform:uppercase; display:inline-block; margin-bottom:14px; }
+        
+        /* Chat with Seller - Elevated Emerald */
+        .chat-btn-elevated {
+          background: #10b981;
+          color: white;
+          padding: 12px 24px;
+          border-radius: 12px;
+          border: none;
+          font-weight: 600;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 10px 20px -10px rgba(16, 185, 129, 0.5);
+        }
+
+        .chat-btn-elevated:hover {
+          transform: translateY(-4px) scale(1.02);
+          background: #059669;
+          box-shadow: 0 15px 25px -10px rgba(16, 185, 129, 0.6);
+        }
+
+        .chat-btn-elevated:active { transform: scale(0.98); }
+
+        .btn-icon { width: 18px; height: 18px; display:inline-block; }
+
+
+        .btn-back { background-color: #475569; color: white; padding: 12px 20px; border-radius: 25px; text-decoration: none; font-weight: bold; margin-bottom: 20px; display: inline-block; transition: all 0.3s ease; border: none; }
+
+        /* Click animation for action buttons */
+        .btn-action:active { transform: scale(0.96); filter: brightness(0.9); }
+
+        /* Price color to match dashboard */
+        .product-price { font-size: 2.8em; font-weight: bold; color: #10B981; margin-bottom: 20px; }
+
+        /* Description box and Seller footer updates */
+        .product-description { background: #F9FAFB; padding: 30px; margin: 0 40px 40px 40px; border-radius: 15px; }
+
+        .seller-footer { background-color: #F1F5F9; border-top: 1px solid #E2E8F0; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .seller-details { display:flex; align-items:center; gap:12px; }
+        .seller-details h3 { color: #333; margin-bottom: 0; font-size: 1.1rem; }
+        .seller-email { color: #4F46E5; font-weight: 600; text-decoration: none; }
+
+        .seller-avatar { width:48px; height:48px; border-radius:50%; background:#4F46E5; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; margin-right:12px; font-size:0.95em; }
+
+        .action-buttons { display: flex; gap: 15px; }
 
         .product-details { display: flex; flex-direction: column; justify-content: space-between; }
         .product-title { font-size: 2.5em; color: #333; margin-bottom: 15px; font-weight: bold; }
@@ -71,14 +134,35 @@
         .seller-details h3 { color: #333; margin-bottom: 10px; font-size: 1.3em; }
         .seller-email { color: #4a90e2; font-weight: 500; }
 
-        .action-buttons { display: flex; gap: 15px; }
+        .action-buttons { display: flex; gap: 15px; align-items: center; }
         .btn { padding: 15px 25px; border: none; border-radius: 25px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-block; text-align: center; }
         .btn-primary { background: linear-gradient(135deg, #4a90e2, #357abd); color: white; }
         .btn-secondary { background: linear-gradient(135deg, #6c757d, #5a6268); color: white; }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); }
 
-        .back-btn { background: rgba(255,255,255,0.2); color: white; border: 2px solid rgba(255,255,255,0.3); padding: 12px 20px; border-radius: 25px; text-decoration: none; font-weight: bold; margin-bottom: 20px; display: inline-block; transition: all 0.3s ease; }
-        .back-btn:hover { background: rgba(255,255,255,0.3); transform: translateY(-2px); }
+        /* Back to Products - Soft Deep Purple */
+        .back-btn-elevated {
+          background: #f1f5f9;
+          color: #475569;
+          padding: 12px 24px;
+          border-radius: 12px;
+          border: 1px solid #e2e8f0;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          display: inline-flex;
+          gap: 8px;
+          align-items: center;
+          text-decoration: none;
+        }
+
+        .back-btn-elevated:hover {
+          background: #4f46e5;
+          color: white;
+          border-color: #4f46e5;
+          transform: translateY(-2px);
+          box-shadow: 0 8px 20px rgba(79, 70, 229, 0.2);
+        }
 
         @media (max-width: 768px) {
             .product-header { grid-template-columns: 1fr; gap: 20px; padding: 20px; }
@@ -92,36 +176,16 @@
 
         }
 
-                .chat-seller-btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 25px;
-            background: linear-gradient(135deg, #4a90e2, #357abd);
-            color: white;
-            font-weight: bold;
-            font-size: 1em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-
-        .chat-seller-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-        }
-
-        .chat-seller-btn:active {
-            transform: scale(0.98);
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-        }
-
+                
 
         @keyframes slideInUp { from {opacity:0; transform:translateY(30px);} to {opacity:1; transform:translateY(0);} }
     </style>
+    <link rel="stylesheet" href="{% static 'marketplace/css/product.css' %}">
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
+<body class="product-page">
     <nav class="navbar">
-        <div class="logo" onclick="window.location.href='/dashboard/'">CampusMart</div>
+        <div class="logo navbar-brand" onclick="window.location.href='/dashboard/'">CampusMart</div>
         <div class="user-menu">
             <div class="user-avatar" onclick="window.location.href='/user-details/'">
                 {% if user.first_name and user.last_name %}
@@ -133,10 +197,15 @@
         </div>
     </nav>
 
-    <div class="container">
-        <a href="/dashboard/" class="back-btn">← Back to Dashboard</a>
-        
-        <div class="product-container">
+    <div class="details-page-wrapper"><div class="container">
+        <nav class="breadcrumb-container">
+            <a href="/dashboard/" class="nav-btn"><i data-lucide="home" size="16"></i><span>Home</span></a>
+            <span class="nav-sep">/</span>
+            <a href="/dashboard/" class="nav-btn"><i data-lucide="package" size="16"></i><span>Products</span></a>
+            <span class="nav-sep">/</span>
+            <span class="product-active-tag">{{ product.title }}</span>
+        </nav> 
+        <div class="product-container product-main-card product-details-container product-card-container">
             <div class="product-header">
                 <div class="product-image-container">
                     {% if product.image %}
@@ -149,9 +218,13 @@
                 <div class="product-details">
                     <div>
                         <h1 class="product-title">{{ product.title }}</h1>
-                        <div class="product-category">{{ product.category.name }}</div>
+                        <div class="badge-category">{{ product.category.name }}</div>
                         <div class="product-price">₹{{ product.cost }}</div>
-                        <div class="product-status status-{{ product.status }}">{{ product.get_status_display }}</div>
+                        {% if product.status == 'available' %}
+                            <div class="product-status status-available available-badge">{{ product.get_status_display }}</div>
+                        {% else %}
+                            <div class="product-status status-{{ product.status }}">{{ product.get_status_display }}</div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -161,23 +234,30 @@
                 <p>{{ product.description }}</p>
             </div>
 
-            <div class="seller-info">
+            <div class="seller-footer">
                 <div class="seller-details">
-                    <h3>Seller Information</h3>
-                    <div class="seller-email">{{ product.seller.email }}</div>
+                    <div class="seller-avatar">{% if product.seller.first_name and product.seller.last_name %}{{ product.seller.first_name.0|upper }}{{ product.seller.last_name.0|upper }}{% else %}{{ product.seller.username.0|upper }}{% endif %}</div>
+                    <div>
+                        <h3>Seller Information</h3>
+                        <a class="seller-email" href="mailto:{{ product.seller.email }}">{{ product.seller.email }}</a>
+                    </div>
                 </div>
-                <div class="action-buttons">
-                    <button class="chat-seller-btn" onclick="startChat('{{ product.id }}', '{{ product.seller.id }}')">
-    💬 Chat with Seller
-</button>
+                <div class="seller-actions action-buttons">
+                    <button class="chat-btn chat-btn-elevated" onclick="startChat('{{ product.id }}', '{{ product.seller.id }}')" aria-label="Chat with seller">
+                        <i data-lucide="message-circle"></i>
+                        <span>Chat with Seller</span>
+                    </button>
 
-                    <a href="/dashboard/" class="btn btn-secondary">Back to Products</a>
-</div>
+                    <a href="/dashboard/" class="back-btn back-btn-elevated" aria-label="Back to products">
+                        <i data-lucide="arrow-left"></i>
+                        <span>Back to Products</span>
+                    </a>
+</div> 
 
                 
             </div>
         </div>
-    </div>
+    </div></div> 
 
     <script>
 
@@ -186,6 +266,7 @@
     window.location.href = `/chat/?product=${productId}&seller=${sellerId}`;
 }
         document.addEventListener('DOMContentLoaded', function() {
+            if (window.lucide) { try { lucide.createIcons(); } catch(e){} }
             const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
             const observer = new IntersectionObserver(function(entries) {
                 entries.forEach(entry => {
@@ -196,7 +277,7 @@
                 });
             }, observerOptions);
 
-            const elements = document.querySelectorAll('.product-description, .seller-info');
+            const elements = document.querySelectorAll('.product-description, .seller-footer');
             elements.forEach(el => {
                 el.style.opacity = '0';
                 el.style.transform = 'translateY(20px)';

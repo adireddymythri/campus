@@ -5,78 +5,149 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Product - CampusMart</title>
     <style>
+        /* Modern Pastel & UI Variables */
+        :root {
+            --primary-blue: #4a90e2;
+            --pastel-bg: #f0f4f8;      
+            --pastel-success: #10b981; 
+            --back-btn-bg: #e0e7ff;    
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --white: #ffffff;
+            --navbar-dark: #1a1c23;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
-        .navbar { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1); }
-        .logo { color: #4a90e2; font-size: 1.8em; font-weight: bold; cursor: pointer; }
-        .container { max-width: 800px; margin: 30px auto; padding: 0 20px; }
-        .back-btn { background: rgba(255, 255, 255, 0.2); color: white; border: 2px solid rgba(255, 255, 255, 0.3); padding: 12px 20px; border-radius: 25px; text-decoration: none; font-weight: bold; margin-bottom: 30px; display: inline-block; transition: all 0.3s ease; }
-        .back-btn:hover { background: rgba(255, 255, 255, 0.3); transform: translateY(-2px); }
-        .upload-container { background: rgba(255, 255, 255, 0.95); border-radius: 25px; padding: 40px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1); backdrop-filter: blur(15px); }
-        .upload-header { text-align: center; margin-bottom: 40px; }
-        .upload-header h1 { color: #333; font-size: 2.5em; font-weight: bold; margin-bottom: 10px; }
-        .upload-header p { color: #666; font-size: 1.2em; }
-        .upload-steps { display: flex; justify-content: center; margin-bottom: 40px; }
-        .step { display: flex; align-items: center; margin: 0 20px; }
-        .step-number { width: 40px; height: 40px; border-radius: 50%; background: #e9ecef; color: #666; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 10px; }
-        .step-number.active { background: linear-gradient(135deg, #4a90e2, #357abd); color: white; }
-        .step-number.completed { background: #28a745; color: white; }
-        .step-text { color: #666; font-weight: 500; }
+        
+        body { 
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; 
+            background-color: var(--pastel-bg); 
+            min-height: 100vh; 
+            color: var(--text-dark);
+        }
+
+        /* Large Professional Navbar */
+        .navbar { 
+            background: var(--navbar-dark); 
+            padding: 18px 50px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); 
+        }
+        .logo { 
+            color: var(--white); 
+            font-size: 1.8em; 
+            font-weight: 800; 
+            text-decoration: none; 
+            cursor: pointer;
+        }
+        
+        .user-icon-container {
+            background: var(--primary-blue);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .user-icon-container svg { fill: var(--white); width: 24px; height: 24px; }
+
+        /* Container & Layout */
+        .container { max-width: 750px; margin: 30px auto; padding: 0 20px; }
+
+        /* Colored Back Button */
+        .back-btn { 
+            background: var(--back-btn-bg); 
+            color: #4338ca; 
+            padding: 10px 22px; 
+            border-radius: 12px; 
+            text-decoration: none; 
+            font-weight: 700; 
+            font-size: 0.9em;
+            margin-bottom: 20px; 
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(67, 56, 202, 0.1);
+        }
+        .back-btn:hover { background: #d0d7f7; transform: translateY(-2px); }
+
+        .upload-container { 
+            background: var(--white); 
+            border-radius: 24px; 
+            padding: 40px; 
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05); 
+        }
+
+        .upload-header { text-align: center; margin-bottom: 30px; }
+        .upload-header h1 { font-size: 2.2em; font-weight: 800; color: var(--text-dark); margin-bottom: 8px; }
+        .upload-header p { color: var(--text-muted); font-size: 1em; }
+
+        /* Progress & Steps */
+        .progress-bar { width: 100%; height: 8px; background: #eef2f7; border-radius: 10px; margin-bottom: 35px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--primary-blue); width: 33.33%; transition: width 0.4s ease; }
+
+        .upload-steps { display: flex; justify-content: space-around; margin-bottom: 35px; }
+        .step { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .step-number { 
+            width: 36px; height: 36px; border-radius: 50%; background: #f1f5f9; color: #94a3b8; 
+            display: flex; align-items: center; justify-content: center; font-weight: 700; 
+        }
+        .step-number.active { background: var(--primary-blue); color: var(--white); }
+        .step-number.completed { background: var(--pastel-success); color: var(--white); }
+        .step-text { font-size: 0.85em; font-weight: 700; color: var(--text-muted); }
+
+        /* Forms */
         .form-section { display: none; }
-        .form-section.active { display: block; animation: fadeInUp 0.6s ease forwards; }
-        .form-group { margin-bottom: 25px; }
-        .form-group label { display: block; margin-bottom: 10px; color: #333; font-weight: 600; font-size: 1.1em; }
-        .form-control { width: 100%; padding: 15px; border: 2px solid #e1e5e9; border-radius: 12px; font-size: 16px; transition: all 0.3s ease; background: #f8f9fa; }
-        .form-control:focus { outline: none; border-color: #4a90e2; background: white; box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1); }
-        .form-control:hover { border-color: #4a90e2; }
-        textarea.form-control { resize: vertical; min-height: 120px; }
-        .image-upload-area { border: 3px dashed #4a90e2; border-radius: 12px; padding: 40px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: rgba(74, 144, 226, 0.05); }
-        .image-upload-area:hover { background: rgba(74, 144, 226, 0.1); border-color: #357abd; }
-        .image-upload-area.dragover { background: rgba(74, 144, 226, 0.15); border-color: #357abd; }
-        .upload-icon { font-size: 3em; color: #4a90e2; margin-bottom: 15px; }
-        .upload-text { color: #4a90e2; font-size: 1.2em; font-weight: 600; margin-bottom: 5px; }
-        .upload-subtext { color: #666; font-size: 0.9em; }
-        .image-preview { display: none; max-width: 300px; max-height: 300px; margin: 20px auto; border-radius: 12px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); }
-        .category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 10px; }
-        .category-option { padding: 15px; border: 2px solid #e1e5e9; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; }
-        .category-option:hover { border-color: #4a90e2; background: rgba(74, 144, 226, 0.1); }
-        .category-option.selected { border-color: #4a90e2; background: rgba(74, 144, 226, 0.15); color: #4a90e2; font-weight: bold; }
-        .navigation-buttons { display: flex; justify-content: space-between; margin-top: 30px; gap: 15px; }
-        .btn { padding: 15px 30px; border: none; border-radius: 25px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-block; text-align: center; flex: 1; }
-        .btn-primary { background: linear-gradient(135deg, #4a90e2, #357abd); color: white; }
-        .btn-secondary { background: #6c757d; color: white; }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); }
-        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
-        .success-section { text-align: center; display: none; }
-        .success-icon { font-size: 5em; color: #28a745; margin-bottom: 20px; }
-        .success-title { color: #333; font-size: 2em; margin-bottom: 15px; }
-        .success-text { color: #666; font-size: 1.1em; margin-bottom: 30px; }
-        .progress-bar { width: 100%; height: 6px; background: #e9ecef; border-radius: 3px; margin-bottom: 30px; overflow: hidden; }
-        .progress-fill { height: 100%; background: linear-gradient(135deg, #4a90e2, #357abd); border-radius: 3px; transition: width 0.3s ease; width: 33.33%; }
-        @media (max-width: 768px) {
-            .upload-steps { flex-direction: column; align-items: center; gap: 15px; }
-            .step { margin: 0; }
-            .upload-container { padding: 30px 20px; }
-            .navigation-buttons { flex-direction: column; }
-            .btn { width: 100%; }
+        .form-section.active { display: block; animation: fadeInUp 0.5s ease; }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 700; color: #334155; }
+        .form-control { 
+            width: 100%; padding: 14px 18px; border: 2px solid #f1f5f9; border-radius: 14px; 
+            font-size: 15px; transition: all 0.3s; background: #f8fafc; 
         }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        .form-control:focus { outline: none; border-color: var(--primary-blue); background: var(--white); }
+
+        /* Image Upload Area */
+        .image-upload-area { 
+            border: 2px dashed var(--primary-blue); 
+            border-radius: 18px; 
+            padding: 50px; 
+            text-align: center; 
+            background: #fbfcfe; 
+            cursor: pointer;
+            transition: 0.3s;
         }
+        .image-upload-area:hover { background: #f0f7ff; }
+        .image-preview { display: none; width: 100%; max-height: 300px; object-fit: contain; border-radius: 18px; margin-top: 15px; border: 1px solid #e2e8f0; }
+
+        /* Navigation Buttons */
+        .navigation-buttons { display: flex; justify-content: space-between; margin-top: 40px; gap: 20px; }
+        .btn { padding: 16px 30px; border: none; border-radius: 14px; font-weight: 700; cursor: pointer; transition: 0.3s; flex: 1; font-size: 1em; text-align: center; }
+        .btn-primary { background: var(--primary-blue); color: var(--white); }
+        .btn-secondary { background: #f1f5f9; color: #64748b; }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
+
     <nav class="navbar">
         <div class="logo" onclick="window.location.href='/dashboard/'">CampusMart</div>
+        <div class="user-icon-container">
+            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        </div>
     </nav>
 
     <div class="container">
-        <a href="/user-details/" class="back-btn">← Back to Profile</a>
+        <a href="/dashboard/" class="back-btn">← Back to Dashboard</a>
         
         <div class="upload-container">
             <div class="upload-header">
-                <h1>Upload Product</h1>
+                <h1>List New Item</h1>
                 <p>Share your items with the campus community</p>
             </div>
 
@@ -87,84 +158,66 @@
             <div class="upload-steps">
                 <div class="step">
                     <div class="step-number active" id="step-1">1</div>
-                    <span class="step-text">Upload Image</span>
+                    <span class="step-text">Photo</span>
                 </div>
                 <div class="step">
                     <div class="step-number" id="step-2">2</div>
-                    <span class="step-text">Product Details</span>
+                    <span class="step-text">Details</span>
                 </div>
                 <div class="step">
                     <div class="step-number" id="step-3">3</div>
-                    <span class="step-text">Review & Submit</span>
+                    <span class="step-text">Review</span>
                 </div>
             </div>
 
             <form id="upload-form" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 
-                <!-- Step 1: Image Upload -->
                 <div class="form-section active" id="section-1">
                     <div class="form-group">
                         <label>Product Image *</label>
-                        <div class="image-upload-area" onclick="document.getElementById('image-input').click()">
-                            <div class="upload-icon">📷</div>
-                            <div class="upload-text">Click to upload image</div>
-                            <div class="upload-subtext">or drag and drop your image here</div>
+                        <div class="image-upload-area" id="upload-box" onclick="document.getElementById('image-input').click()">
+                            <span style="font-size: 2.5em;">📸</span>
+                            <p style="color: var(--primary-blue); font-weight: 700; margin-top: 10px;">Click to upload image</p>
                         </div>
                         <input type="file" id="image-input" name="image" accept="image/*" style="display: none;" required>
                         <img id="image-preview" class="image-preview" alt="Preview">
                     </div>
                 </div>
 
-                <!-- Step 2: Product Details -->
                 <div class="form-section" id="section-2">
                     <div class="form-group">
-                        <label for="title">Product Title *</label>
-                        <input type="text" id="title" name="title" class="form-control" placeholder="Enter a descriptive title" required>
+                        <label>Title *</label>
+                        <input type="text" id="title" name="title" class="form-control" placeholder="What are you selling?" required>
                     </div>
-
-                     <div class="form-group">
-        <label for="category">Category *</label>
-        <select id="category" name="category" class="form-control" required>
-            <option value="" disabled selected>Select a category</option>
-            <option value="1">Books</option>
-            <option value="2">Sports</option>
-            <option value="3">Electronics</option>
-            <option value="4">Others</option>
-        </select>
-    </div>
-
                     <div class="form-group">
-                        <label for="cost">Price (₹) *</label>
-                        <input type="number" id="cost" name="cost" class="form-control" placeholder="Enter price in rupees" min="1" required>
+                        <label>Category *</label>
+                        <select id="category" name="category" class="form-control" required>
+                            <option value="" disabled selected>Select a category</option>
+                            <option value="1">Books</option>
+                            <option value="2">Sports</option>
+                            <option value="3">Electronics</option>
+                            <option value="4">Others</option>
+                        </select>
                     </div>
-
                     <div class="form-group">
-                        <label for="description">Description *</label>
-                        <textarea id="description" name="description" class="form-control" placeholder="Describe your product in detail..." required></textarea>
+                        <label>Price (₹) *</label>
+                        <input type="number" id="cost" name="cost" class="form-control" placeholder="0" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description *</label>
+                        <textarea id="description" name="description" class="form-control" rows="3" placeholder="Condition, age, etc..." required></textarea>
                     </div>
                 </div>
 
-                <!-- Step 3: Review -->
                 <div class="form-section" id="section-3">
-                    <h3 style="text-align: center; margin-bottom: 30px; color: #333;">Review Your Product</h3>
                     <div id="review-content"></div>
                 </div>
 
-                <!-- Success Section -->
-                {% if success %}
-                <div class="success-section" id="success-section">
-                    <div class="success-icon">✅</div>
-                    <div class="success-title">Product Uploaded Successfully!</div>
-                    <div class="success-text">Your product has been added to the marketplace and is now visible to other users.</div>
-                    <a href="/dashboard/" class="btn btn-primary">Go to Dashboard</a>
-                </div>
-                {% endif %}
-
                 <div class="navigation-buttons">
                     <button type="button" class="btn btn-secondary" id="prev-btn" onclick="previousStep()" style="display: none;">Previous</button>
-                    <button type="button" class="btn btn-primary" id="next-btn" onclick="nextStep()">Next</button>
-                    <button type="submit" class="btn btn-primary" id="submit-btn" style="display: none;">Upload Product</button>
+                    <button type="button" class="btn btn-primary" id="next-btn" onclick="nextStep()">Next Step</button>
+                    <button type="submit" class="btn btn-primary" id="submit-btn" style="display: none;">Publish Product</button>
                 </div>
             </form>
         </div>
@@ -176,157 +229,88 @@
 
         const imageInput = document.getElementById('image-input');
         const imagePreview = document.getElementById('image-preview');
-        const uploadArea = document.querySelector('.image-upload-area');
-        imageInput.addEventListener('change', handleImageSelect);
+        const uploadBox = document.getElementById('upload-box');
 
-        uploadArea.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            this.classList.add('dragover');
-        });
-        uploadArea.addEventListener('dragleave', function(e) {
-            e.preventDefault();
-            this.classList.remove('dragover');
-        });
-        uploadArea.addEventListener('drop', function(e) {
-            e.preventDefault();
-            this.classList.remove('dragover');
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                imageInput.files = files;
-                handleImageSelect();
-            }
-        });
-
-        function handleImageSelect() {
-            const file = imageInput.files[0];
+        // FIXED: Image Preview Handling
+        imageInput.addEventListener('change', function() {
+            const file = this.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     imagePreview.src = e.target.result;
                     imagePreview.style.display = 'block';
-                    uploadArea.style.display = 'none';
+                    uploadBox.style.display = 'none';
                 };
                 reader.readAsDataURL(file);
             }
-        }
-
-        document.querySelectorAll('.category-option').forEach(option => {
-            option.addEventListener('click', function() {
-                document.querySelectorAll('.category-option').forEach(opt => opt.classList.remove('selected'));
-                this.classList.add('selected');
-                const categoryId = this.getAttribute('data-category');  // <- use getAttribute
-        document.getElementById('category').value = categoryId;
-        console.log("Selected category:", categoryId);
-            });
         });
 
         function nextStep() {
-            if (validateCurrentStep()) {
+            if (validateStep()) {
                 if (currentStep < totalSteps) {
                     currentStep++;
-                    updateSteps();
-                    updateProgressBar();
                     if (currentStep === 3) generateReview();
+                    updateUI();
                 }
             }
         }
+
         function previousStep() {
             if (currentStep > 1) {
                 currentStep--;
-                updateSteps();
-                updateProgressBar();
+                updateUI();
             }
         }
-        function updateSteps() {
-            document.querySelectorAll('.form-section').forEach(section => section.classList.remove('active'));
-            document.getElementById(`section-${currentStep}`).classList.add('active');
-            for (let i = 1; i <= totalSteps; i++) {
-                const stepElement = document.getElementById(`step-${i}`);
-                stepElement.classList.remove('active', 'completed');
-                if (i < currentStep) { stepElement.classList.add('completed'); stepElement.innerHTML = '✓'; }
-                else if (i === currentStep) { stepElement.classList.add('active'); stepElement.innerHTML = i; }
-                else stepElement.innerHTML = i;
+
+        function validateStep() {
+            if (currentStep === 1 && !imageInput.files[0]) {
+                alert("Please upload an image.");
+                return false;
             }
-            document.getElementById('prev-btn').style.display = currentStep > 1 ? 'block' : 'none';
-            document.getElementById('next-btn').style.display = currentStep < totalSteps ? 'block' : 'none';
-            document.getElementById('submit-btn').style.display = currentStep === totalSteps ? 'block' : 'none';
-        }
-        function updateProgressBar() {
-            document.getElementById('progress-fill').style.width = `${(currentStep / totalSteps) * 100}%`;
-        }
-        function validateCurrentStep() {
-            switch (currentStep) {
-                case 1: if (!imageInput.files[0]) { alert('Please upload a product image.'); return false; } break;
-                case 2:
-                    const title = document.getElementById('title').value.trim();
-                    const category = document.getElementById('category').value;
-                    const cost = document.getElementById('cost').value;
-                    const description = document.getElementById('description').value.trim();
-                    if (!title) { alert('Please enter a product title.'); return false; }
-                    if (!category) { alert('Please select a category.'); return false; }
-                    if (!cost || cost <= 0) { alert('Please enter a valid price.'); return false; }
-                    if (!description) { alert('Please enter a product description.'); return false; }
-                    break;
+            if (currentStep === 2) {
+                const fields = ['title', 'category', 'cost', 'description'];
+                for (let id of fields) {
+                    if (!document.getElementById(id).value) {
+                        alert("Please fill all fields.");
+                        return false;
+                    }
+                }
             }
             return true;
         }
+
         function generateReview() {
-           const title = document.getElementById('title').value;
-            const categorySelect = document.getElementById('category');
-            const category = categorySelect.options[categorySelect.selectedIndex].text;
-            const cost = document.getElementById('cost').value;
-            const description = document.getElementById('description').value;
-            const imageSrc = imagePreview.src;
+            const title = document.getElementById('title').value;
+            const price = document.getElementById('cost').value;
+            const desc = document.getElementById('description').value;
+            const cat = document.getElementById('category').options[document.getElementById('category').selectedIndex].text;
 
             document.getElementById('review-content').innerHTML = `
-                <div style="display: grid; grid-template-columns: 300px 1fr; gap: 30px; align-items: start;">
-                    <div>
-                        <img src="${imageSrc}" style="width: 100%; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);" alt="Product preview">
+                <div style="text-align: center;">
+                    <img src="${imagePreview.src}" style="max-height: 180px; border-radius: 12px; margin-bottom: 15px;">
+                    <h3 style="margin-bottom: 5px;">${title}</h3>
+                    <p style="color: var(--primary-blue); font-weight: 700; margin-bottom: 10px;">${cat} • ₹${price}</p>
+                    <div style="background: #f8fafc; padding: 15px; border-radius: 12px; text-align: left; font-size: 0.9em;">
+                        <strong>Description:</strong><br>${desc}
                     </div>
-                    <div>
-                        <h3 style="color: #333; font-size: 1.8em; margin-bottom: 10px;">${title}</h3>
-                        <p style="color: #4a90e2; font-weight: bold; margin-bottom: 15px;">${category}</p>
-                        <p style="color: #27ae60; font-size: 2em; font-weight: bold; margin-bottom: 20px;">₹${cost}</p>
-                        <div style="background: #f8f9fa; padding: 20px; border-radius: 12px;">
-                            <h4 style="color: #333; margin-bottom: 10px;">Description:</h4>
-                            <p style="color: #666; line-height: 1.6;">${description}</p>
-                        </div>
-                    </div>
-                </div>`;
+                </div>
+            `;
         }
 
-        // Handle form submission
-        document.getElementById('upload-form').addEventListener('submit', function(e) {
-            if (!validateCurrentStep()) {
-                e.preventDefault();
-                return;
+        function updateUI() {
+            document.querySelectorAll('.form-section').forEach((s, i) => s.classList.toggle('active', i+1 === currentStep));
+            document.getElementById('progress-fill').style.width = (currentStep/totalSteps * 100) + "%";
+            document.getElementById('prev-btn').style.display = currentStep === 1 ? 'none' : 'block';
+            document.getElementById('next-btn').style.display = currentStep === 3 ? 'none' : 'block';
+            document.getElementById('submit-btn').style.display = currentStep === 3 ? 'block' : 'none';
+            
+            for(let i=1; i<=totalSteps; i++) {
+                const step = document.getElementById('step-'+i);
+                step.classList.toggle('active', i === currentStep);
+                step.classList.toggle('completed', i < currentStep);
+                step.innerHTML = i < currentStep ? "✓" : i;
             }
-            // Show uploading text
-            const submitBtn = document.getElementById('submit-btn');
-            submitBtn.textContent = 'Uploading...';
-            submitBtn.disabled = true;
-        });
-
-        // Initialize steps and progress
-        updateSteps();
-        updateProgressBar();
-
-        // Optional: Animate form controls and description textarea
-        document.addEventListener('DOMContentLoaded', function() {
-            const formControls = document.querySelectorAll('.form-control');
-            formControls.forEach(control => {
-                control.addEventListener('focus', function() { this.style.transform = 'scale(1.02)'; });
-                control.addEventListener('blur', function() { this.style.transform = 'scale(1)'; });
-            });
-
-            const description = document.getElementById('description');
-            description.addEventListener('input', function() {
-                this.style.height = 'auto';
-                this.style.height = this.scrollHeight + 'px';
-            });
-        });
+        }
     </script>
 </body>
 </html>
-
-           

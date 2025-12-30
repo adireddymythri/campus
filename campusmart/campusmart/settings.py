@@ -25,12 +25,12 @@ SECRET_KEY = 'django-insecure-ng^dw1*to*+3%e6ut+sisx^equzq2n5j6#xkvux%m*xjim)u+2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
 INSTALLED_APPS = [
-    # Django default apps
+    'marketplace',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,9 +41,6 @@ INSTALLED_APPS = [
     # Third-party apps
     'channels',
     'rest_framework',
-
-    # Your app
-    'marketplace',
 ]
 
 MIDDLEWARE = [
@@ -134,12 +131,14 @@ AUTH_USER_MODEL = 'marketplace.User'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Email settings for OTP verification
+# Email settings for OTP verification & Password Reset
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'your-email@gmail.com'        # Replace with your Gmail
-EMAIL_HOST_PASSWORD = 'your-app-password'      # Replace with your App Password
+EMAIL_HOST_USER = 'mythriadireddy@gmail.com'        # Replace with your Gmail
+EMAIL_HOST_PASSWORD = 'yzaf urpi iupp oklt'      # Replace with your App Password
 
 # Channels configuration
 CHANNEL_LAYERS = {
@@ -152,10 +151,13 @@ CHANNEL_LAYERS = {
 }
 
 # Login redirect (optional)
-LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = '/dashboard/'
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'dashboard'
+LOGOUT_REDIRECT_URL = 'login'
 
 # Session settings (optional)
 SESSION_COOKIE_AGE = 86400  # 1 day in seconds
 SESSION_SAVE_EVERY_REQUEST = True
+# settings.py
+AUTH_USER_MODEL = 'marketplace.User'
+

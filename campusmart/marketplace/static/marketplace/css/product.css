@@ -1,0 +1,102 @@
+/* Shared UI styles for product details (breadcrumbs, buttons, image elevation, icons)
+   Extracted from product_details.html for reuse across site
+*/
+
+/* Navigation / Breadcrumbs */
+.breadcrumb-container { margin-bottom: 12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* space between icon and text */
+  padding: 8px 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 50px;
+  text-decoration: none;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.nav-btn:hover {
+  background: #ffffff;
+  color: #6366f1;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.12);
+  transform: translateY(-2px);
+}
+
+.nav-sep { margin: 0 10px; color: #cbd5e1; font-weight: 300; }
+
+.product-active-tag, .product-tag-active {
+  padding: 8px 18px;
+  background: #4f46e5;
+  color: white;
+  border-radius: 50px;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+  margin-left: 4px;
+}
+
+/* Icon vertical alignment */
+.nav-btn i { display: block; transform: translateY(-0.5px); width: 16px; height: 16px; }
+
+/* Icon spacing for other buttons */
+.chat-btn i, .back-btn i { width: 16px; height: 16px; margin-right: 8px; vertical-align: middle; }
+
+/* Product image elevation */
+.product-image-container img {
+  border-radius: 16px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+.product-image-container img:hover {
+  transform: scale(1.03) translateY(-5px);
+  box-shadow: 0 20px 40px rgba(79, 70, 229, 0.2);
+}
+
+/* Button animations */
+.chat-btn, .back-btn, .nav-btn { position: relative; overflow: hidden; }
+@keyframes pulse-green {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+.chat-btn { animation: pulse-green 2s infinite; }
+
+/* Elevated action buttons */
+.chat-btn-elevated {
+  background: #10b981;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 20px -10px rgba(16, 185, 129, 0.5);
+}
+.chat-btn-elevated:hover { transform: translateY(-4px) scale(1.02); background: #059669; box-shadow: 0 15px 25px -10px rgba(16, 185, 129, 0.6); }
+
+.back-btn-elevated {
+  background: #f1f5f9;
+  color: #475569;
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  text-decoration: none;
+}
+.back-btn-elevated:hover { background: #4f46e5; color: white; border-color: #4f46e5; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(79, 70, 229, 0.2); }
+
+/* Small helpers */
+.btn-icon { width: 18px; height: 18px; display:inline-block; }

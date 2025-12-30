@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 {% load static %}
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CampusMart - Login & Signup</title>
+    <title>CampusMart - Admin Portal</title>
     <meta name="csrf-token" content="{{ csrf_token }}">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-        /* ================= BODY + BACKGROUND IMAGE ================= */
         body {
             font-family: 'Segoe UI', sans-serif;
-
-            /* Background image */
-            background-image: url("{% static 'marketplace/images/images/image.jpg' %}");
+            /* Using your specific static path */
+            background-image: url("{% static 'marketplace/images/images/image.png' %}");
             background-repeat: no-repeat;
             background-position: center center;
             background-size: cover;
@@ -25,214 +28,365 @@
             position: relative;
         }
 
-        /* Overlay for readability */
+        /* Darker overlay for better text contrast */
         body::before {
             content: '';
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.35);
+            background: rgba(0, 0, 0, 0.4);
             pointer-events: none;
             z-index: 0;
         }
 
-        /* Glass/transparent container */
         .auth-container {
-            background: rgba(255,255,255,0.22);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 20px;
             padding: 40px;
-            width: 400px;
+            width: 420px;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.35);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             position: relative;
             z-index: 1;
         }
 
         .logo {
-            font-size: 2em;
+            font-size: 2.2em;
             font-weight: bold;
-            color: #4a90e2;
-            margin-bottom: 20px;
+            color: #fff;
+            margin-bottom: 25px;
         }
 
         .auth-tabs {
             display: flex;
-            background: rgba(255,255,255,0.4);
-            border-radius: 25px;
-            margin-bottom: 25px;
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 12px;
+            margin-bottom: 30px;
             padding: 5px;
         }
+
         .tab-btn {
             flex: 1;
             border: none;
             padding: 10px;
-            border-radius: 20px;
+            border-radius: 10px;
             cursor: pointer;
             font-weight: 600;
             background: none;
+            color: rgba(255, 255, 255, 0.8);
+            transition: 0.3s;
         }
+
         .tab-btn.active {
-            background: linear-gradient(135deg,#4a90e2,#357abd);
-            color: white;
+            background: #fff;
+            color: #4a90e2;
         }
 
-        .form-section { display: none; }
-        .form-section.active { display: block; }
+        .form-section {
+            display: none;
+        }
 
-        .form-group { margin-bottom: 15px; text-align: left; }
-        label { display: block; margin-bottom: 5px; color: #555; font-weight: 500; }
+        .form-section.active {
+            display: block;
+            animation: fadeIn 0.4s;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #fff;
+            font-weight: 500;
+            font-size: 0.9em;
+        }
+
         input {
             width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: none;
+            background: #eef3ff;
+            /* Matching your screenshot input color */
             font-size: 14px;
+            outline: none;
         }
 
         .btn-primary {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             border: none;
-            border-radius: 8px;
-            background: linear-gradient(135deg,#4a90e2,#357abd);
+            border-radius: 10px;
+            background: #1a2634;
+            /* Dark button like your screenshot */
             color: #fff;
             font-weight: bold;
             cursor: pointer;
+            transition: 0.3s;
         }
-        .btn-primary:hover { opacity: 0.9; }
+
+        .btn-primary:hover {
+            background: #000;
+        }
+
+        #alerts {
+            margin-bottom: 15px;
+        }
 
         .alert {
-            margin-bottom: 15px;
             padding: 10px;
             border-radius: 6px;
+            font-size: 0.9em;
         }
-        .alert-success { background: #d4edda; color: #155724; }
-        .alert-error { background: #f8d7da; color: #721c24; }
+
+        .alert-error {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ffcccc;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .alert-success {
+            background: rgba(0, 255, 0, 0.2);
+            color: #ccffcc;
+        }
+
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            cursor: pointer;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            padding: 5px;
+            z-index: 10;
+            transition: color 0.3s;
+        }
+
+        .toggle-password:hover {
+            color: #4a90e2;
+        }
+
+        .toggle-password svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
+
 <body>
 
-<div class="auth-container">
-    <div class="logo">CampusMart</div>
+    <div class="auth-container">
+        <div class="logo">CampusMart</div>
 
-    <!-- Tabs -->
-    <div class="auth-tabs">
-        <button class="tab-btn active" onclick="switchTab('login')">Login</button>
-        <button class="tab-btn" onclick="switchTab('signup')">Sign Up</button>
-    </div>
-
-    <div id="alerts"></div>
-
-    <!-- Login -->
-    <div id="login-section" class="form-section active">
-        <div class="form-group">
-            <label>Email or Username</label>
-            <input type="text" id="login-username" required>
+        <div class="auth-tabs">
+            <button class="tab-btn" onclick="switchTab('login')">Login</button>
+            <button class="tab-btn" onclick="switchTab('signup')">Sign Up</button>
+            <button class="tab-btn active" onclick="switchTab('admin')">Admin</button>
         </div>
-        <div class="form-group">
-            <label>Password</label>
-            <input type="password" id="login-password" required>
+
+        <div id="alerts"></div>
+
+        <div id="admin-section" class="form-section active">
+            <div class="form-group">
+                <label>Admin ID</label>
+                <input type="text" id="admin-username" placeholder="admin" required>
+            </div>
+            <div class="form-group">
+                <label>Secret Password</label>
+                <div class="password-wrapper">
+                    <input type="password" id="admin-password" placeholder="••••••••" required>
+                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('admin-password')">
+                        <svg viewBox="0 0 24 24" class="eye-icon">
+                            <path
+                                d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <button class="btn-primary" onclick="loginAdmin()">Admin Login</button>
         </div>
-        <button class="btn-primary" onclick="loginUser()">Login</button>
+
+        <div id="login-section" class="form-section">
+            <div class="form-group">
+                <label>Email or Name</label>
+                <input type="text" id="login-username" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <div class="password-wrapper">
+                    <input type="password" id="login-password" required>
+                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('login-password')">
+                        <svg viewBox="0 0 24 24" class="eye-icon">
+                            <path
+                                d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <button class="btn-primary" style="background: #4a90e2;" onclick="loginUser()">Login</button>
+            <div style="margin-top: 15px; text-align: center;">
+                <a href="{% url 'password_reset' %}"
+                    style="color: #fff; font-size: 0.9em; text-decoration: none; opacity: 0.8;">Forgot Password?</a>
+            </div>
+        </div>
+
+        <div id="signup-section" class="form-section">
+            <div class="form-group"><label>Name</label><input type="text" id="name" required></div>
+            <div class="form-group"><label>Email</label><input type="email" id="email" required></div>
+            <div class="form-group">
+                <label>Password</label>
+                <div class="password-wrapper">
+                    <input type="password" id="password1" required>
+                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('password1')">
+                        <svg viewBox="0 0 24 24" class="eye-icon">
+                            <path
+                                d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <div class="password-wrapper">
+                    <input type="password" id="password2" required>
+                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('password2')">
+                        <svg viewBox="0 0 24 24" class="eye-icon">
+                            <path
+                                d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <button class="btn-primary" style="background: #4a90e2;" onclick="registerUser()">Register</button>
+        </div>
     </div>
 
-    <!-- Register (simplified) -->
-    <div id="signup-section" class="form-section">
-        <div class="form-group"><label>Name</label>
-            <input type="text" id="name" required></div>
-        <div class="form-group"><label>Email</label>
-            <input type="email" id="email" required></div>
-        <div class="form-group"><label>Password</label>
-            <input type="password" id="password1" required></div>
-        <div class="form-group"><label>Confirm Password</label>
-            <input type="password" id="password2" required></div>
-        <button class="btn-primary" onclick="registerUser()">Register</button>
-    </div>
+    <script>
+        const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    <!-- OTP -->
-    <div id="otp-section" class="form-section">
-        <h3>Verify Account</h3>
-        <p>Enter the 6-digit code sent to your email</p>
-        <input type="text" id="otp-input" maxlength="6" required>
-        <button class="btn-primary" onclick="verifyOtp()">Verify</button>
-    </div>
-</div>
+        function togglePasswordVisibility(inputId) {
+            const input = document.getElementById(inputId);
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
 
-<script>
-const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-// Switch between login/signup tabs
-function switchTab(tab) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
-    document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
-    document.getElementById(tab+'-section').classList.add('active');
-    document.getElementById('alerts').innerHTML = '';
-}
-
-// Alerts
-function showAlert(msg,type){
-    let a=document.getElementById('alerts');
-    a.innerHTML=`<div class="alert alert-${type}">${msg}</div>`;
-    setTimeout(()=>a.innerHTML='',4000);
-}
-
-// ---------------------- LOGIN ----------------------
-function loginUser(){
-    const data = {
-        username: document.getElementById('login-username').value,
-        password: document.getElementById('login-password').value
-    };
-
-    fetch('/login/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrftoken
-        },
-        credentials: 'same-origin',
-        body: JSON.stringify(data)
-    })
-    .then(r => r.json())
-    .then(res => {
-        if(res.status === 'success'){
-            window.location.href = res.redirect;
-        } else {
-            showAlert(res.message, 'error');
+            // Toggle SVG icon appearance if needed (optional)
+            const button = input.nextElementSibling;
+            if (type === 'text') {
+                button.innerHTML = '<svg viewBox="0 0 24 24" class="eye-icon"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.82l2.92 2.92c1.51-1.26 2.7-2.89 3.44-4.74-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78 3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/></svg>';
+            } else {
+                button.innerHTML = '<svg viewBox="0 0 24 24" class="eye-icon"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>';
+            }
         }
-    })
-    .catch(err => console.error('Login error:', err));
-}
 
-// ---------------------- REGISTER ----------------------
-function registerUser(){
-    const data = {
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        password1: document.getElementById('password1').value,
-        password2: document.getElementById('password2').value
-    };
-    fetch('/register/', {
-        method:'POST',
-        headers:{'Content-Type':'application/json','X-CSRFToken':csrftoken},
-        credentials: 'same-origin',
-        body:JSON.stringify(data)
-    })
-    .then(r => r.json())
-    .then(res => {
-        if(res.status==='success'){
-            showAlert('Registration successful! Wait for admin approval.','success');
-            switchTab('login');
-        } else if (res.errors) {
-            showAlert(Object.values(res.errors).join('<br>'), 'error');
-        } else {
-            showAlert(res.message || 'Something went wrong.', 'error');
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(tab + '-section').classList.add('active');
+            document.getElementById('alerts').innerHTML = '';
         }
-    })
-    .catch(err => console.error('Register error:', err));
-}
-</script>
+
+        function showAlert(msg, type) {
+            let a = document.getElementById('alerts');
+            a.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+            setTimeout(() => a.innerHTML = '', 4000);
+        }
+
+        // ADMIN LOGIN FUNCTION
+        function loginAdmin() {
+            const data = {
+                username: document.getElementById('admin-username').value,
+                password: document.getElementById('admin-password').value
+            };
+
+            fetch('/admin-login/', {  // Ensure this URL matches your urls.py
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify(data)
+            })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.status === 'success') {
+                        window.location.href = res.redirect;
+                    } else {
+                        showAlert(res.message, 'error');
+                    }
+                })
+                .catch(err => console.error('Admin Auth Error:', err));
+        }
+
+        // STUDENT LOGIN FUNCTION
+        function loginUser() {
+            const data = {
+                username: document.getElementById('login-username').value,
+                password: document.getElementById('login-password').value
+            };
+
+            fetch('/login/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+                body: JSON.stringify(data)
+            })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.status === 'success') window.location.href = res.redirect;
+                    else showAlert(res.message, 'error');
+                });
+        }
+
+        function registerUser() {
+            const data = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                password1: document.getElementById('password1').value,
+                password2: document.getElementById('password2').value
+            };
+            fetch('/register/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+                body: JSON.stringify(data)
+            })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.status === 'success') {
+                        showAlert('Registration successful! Waiting for approval.', 'success');
+                        setTimeout(() => switchTab('login'), 2000);
+                    } else {
+                        showAlert(res.message || 'Error', 'error');
+                    }
+                });
+        }
+    </script>
 
 </body>
+
 </html>
