@@ -25,7 +25,17 @@ SECRET_KEY = 'django-insecure-ng^dw1*to*+3%e6ut+sisx^equzq2n5j6#xkvux%m*xjim)u+2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    'campus-mart-u4ws.onrender.com',
+    'localhost',
+    '127.0.0.1'
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://campus-mart-u4ws.onrender.com'
+]
+
+
 
 # Application definition
 
@@ -51,7 +61,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
 ]
 
 ROOT_URLCONF = 'campusmart.urls'

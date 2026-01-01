@@ -15,7 +15,14 @@ SECRET_KEY = os.environ.get('SECRET_KEY', SECRET_KEY)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'campus-mart-u4ws.onrender.com,localhost,127.0.0.1').split(',')
+
+# SECURE_PROXY_SSL_HEADER is needed for Render to recognize HTTPS
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://campus-mart-u4ws.onrender.com',
+]
 
 # Database
 # Use PostgreSQL in production
