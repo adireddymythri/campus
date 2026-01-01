@@ -2,6 +2,14 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+from pathlib import Path
+
+# Add the campusmart directory to the Python path so Django can find the settings module
+BASE_DIR = Path(__file__).resolve().parent
+campusmart_dir = BASE_DIR / 'campusmart'
+if campusmart_dir.exists():
+    if str(campusmart_dir) not in sys.path:
+        sys.path.insert(0, str(campusmart_dir))
 
 
 def main():
