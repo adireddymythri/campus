@@ -224,9 +224,9 @@ tiktoken==0.12.0
 timm==1.0.20
 tokenizers==0.22.1
 toml==0.10.2
-torch==2.8.0
-torchaudio==2.8.0+cpu
-torchvision==0.23.0
+torch==2.5.1
+torchaudio==2.5.1
+torchvision==0.20.1
 tornado==6.4.2
 tqdm==4.67.1
 transformers==4.57.3
