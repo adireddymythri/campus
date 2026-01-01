@@ -4,5 +4,4 @@ db.sqlite3
 *.pyc
 *.log
 staticfiles/
-media/
 venv/

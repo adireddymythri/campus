@@ -40,12 +40,17 @@ def register(request):
         form = UserRegistrationForm(data)
         if form.is_valid():
             user = form.save(commit=False)
-            user.is_verified = False   # wait for admin approval
-            user.set_password(form.cleaned_data['password1'])
+            user.is_verified = False  # wait for admin approval
             user.save()
             return JsonResponse({'status': 'success', 'message': 'Registration successful!'})
         else:
-            return JsonResponse({'status': 'error', 'errors': form.errors})
+            # Return the first error found in the form
+            error_msg = "Invalid data"
+            if form.errors:
+                # Extract first error message
+                first_field = next(iter(form.errors))
+                error_msg = form.errors[first_field][0]
+            return JsonResponse({'status': 'error', 'message': error_msg, 'errors': form.errors})
 
     # FIX: Render page instead of returning JSON error
     return render(request, 'auth.html')

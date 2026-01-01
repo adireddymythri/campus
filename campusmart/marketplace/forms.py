@@ -5,7 +5,7 @@ from django.contrib.auth.forms import AuthenticationForm
 
 from django.utils.text import slugify
 
-class UserRegistrationForm(UserCreationForm):
+class UserRegistrationForm(forms.ModelForm):
     name = forms.CharField(max_length=150, required=True)
     email = forms.EmailField(required=True)
     phone_number = forms.CharField(max_length=15, required=False)
@@ -14,7 +14,7 @@ class UserRegistrationForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ('name','email','phone_number','password1','password2')
+        fields = ('name', 'email', 'phone_number')
     
     def clean(self):
         cleaned_data = super().clean()
